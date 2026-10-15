@@ -23,7 +23,7 @@ from flask import (
 
 from common import (
     ROLE_ADMIN, ROLE_USER, STATUS_ACTIVE, STATUS_DISABLED, STATUS_EXPIRED,
-    STATUS_INACTIVE, ACTIVATION_DAYS, add_days, days_left, fmt_dt, is_expired,
+    STATUS_INACTIVE, add_days, days_left, is_expired,
     normalize_phone, is_valid_phone, now_dt, now_str, parse_dt, csv_safe,
 )
 from config import load_config

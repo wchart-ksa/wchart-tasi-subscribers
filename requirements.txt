@@ -3,6 +3,7 @@
 Flask>=3.0
 openpyxl>=3.1
 python-dotenv>=1.0
+bcrypt>=4.0
 # خادم إنتاجي بسيط (يعمل على ويندوز وماك ولينكس)
 waitress>=3.0
 # على خوادم لينكس يمكنك استخدام gunicorn بدلاً من waitress:
