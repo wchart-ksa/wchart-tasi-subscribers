@@ -1,44 +1,43 @@
 {% extends "base.html" %}
 {% block title %}تمديد الاشتراك — لوحة الأدمن{% endblock %}
 {% block content %}
-<div class="card" style="max-width:720px;">
-  <h2>تمديد اشتراك مشترك</h2>
+<div class="card" style="max-width:760px;">
+  <h2 class="card-title">⏳ تمديد اشتراك مشترك</h2>
   <form method="post" action="{{ url_for('admin_extensions') }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <div class="form-grid">
-      <div class="form-row">
-        <label for="phones">أرقام الجوال (يمكن عدة أرقام، سطر لكل رقم أو مفصولة بفاصلة)</label>
-        <textarea id="phones" name="phones" rows="4" required placeholder="05XXXXXXXX&#10;05YYYYYYYY&#10;أو 05XXXXXXXX,05YYYYYYYY"></textarea>
-      </div>
-      <div class="form-row">
-        <label>خيارات سريعة</label>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          {% for d in [7,15,30,90] %}
-            <button class="btn btn-ghost" type="button" onclick="document.getElementById('days').value='{{ d }}'">{{ d }} يوم</button>
-          {% endfor %}
-        </div>
-      </div>
-      <div class="form-row">
-        <label for="days">عدد الأيام (1–365)</label>
-        <input id="days" name="days" type="number" min="1" max="365" required>
-      </div>
-      <div class="form-row">
-        <label for="reason">السبب (اختياري)</label>
-        <input id="reason" name="reason" type="text" maxlength="120" placeholder="سبب التمديد">
-      </div>
-      <div>
-        <button class="btn" type="submit">تمديد</button>
+    <div class="form-group">
+      <label class="form-label" for="phones">أرقام الجوال (يمكن عدة أرقام — سطر لكل رقم أو مفصولة بفاصلة)</label>
+      <textarea class="form-control" id="phones" name="phones" rows="4" required placeholder="05XXXXXXXX&#10;05YYYYYYYY&#10;أو 05XXXXXXXX,05YYYYYYYY"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">خيارات سريعة (بالأيام)</label>
+      <div class="filter-actions">
+        {% for d in [7,15,30,90,180,365] %}
+          <button class="btn btn-secondary btn-sm" type="button" onclick="document.getElementById('days').value='{{ d }}'">{{ d }} يوم</button>
+        {% endfor %}
       </div>
     </div>
+    <div class="form-group">
+      <label class="form-label" for="days">عدد الأيام (1–365)</label>
+      <input class="form-control" id="days" name="days" type="number" min="1" max="365" required value="30">
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="reason">السبب (اختياري)</label>
+      <input class="form-control" id="reason" name="reason" type="text" maxlength="120" placeholder="سبب التمديد">
+    </div>
+    <button class="btn btn-primary" type="submit">تمديد الاشتراك</button>
   </form>
+  <div class="alert alert-info" style="margin-top:16px;">
+    ملاحظة: الحسابات المعطلة لا تُمدّد تلقائياً، والحسابات غير المفعّلة يجب تفعيلها بالكود أولاً.
+  </div>
 </div>
 
 {% if results %}
-<div class="card" style="margin-top:16px;">
-  <h3>نتيجة التمديد</h3>
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>الجوال</th><th>النتيجة</th><th>تاريخ الانتهاء قبل</th><th>تاريخ الانتهاء بعد</th><th>عدد الأيام</th></tr></thead>
+<div class="card">
+  <h3 class="card-title">📋 نتيجة التمديد</h3>
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead><tr><th>الجوال</th><th>النتيجة</th><th>الانتهاء قبل</th><th>الانتهاء بعد</th><th>الأيام</th></tr></thead>
       <tbody>
         {% for r in results %}
         <tr><td>{{ r.phone }}</td><td>{{ r.msg }}</td><td>{{ r.before }}</td><td>{{ r.after }}</td><td>{{ r.days }}</td></tr>

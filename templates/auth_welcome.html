@@ -1,20 +1,19 @@
 {% extends "base.html" %}
-{% block title %}رسالة الترحيب — مشتركين منصة دبليوشارت تاسي{% endblock %}
+{% block title %}رسالة الترحيب — {{ site_title }}{% endblock %}
 {% block content %}
-<div class="card" style="max-width:640px;margin:0 auto;text-align:center;">
-  <img src="{{ url_for('static', filename='logo.svg') }}" alt="Wchart-tasi" class="hero-logo">
-  <h2>تم إنشاء الحساب بنجاح</h2>
-  <p>
-    أهلاً وسهلاً بك يا <strong>{{ username }}</strong> في «مشتركين منصة دبليوشارت تاسي» 🎉
+<div class="welcome-card">
+  <div class="welcome-logo" style="display:flex;justify-content:center;color:var(--text-primary);">
+    {% include "_logo.html" %}
+  </div>
+  <h2 class="welcome-title">🎉 تم إنشاء الحساب بنجاح</h2>
+  <p class="welcome-text">
+    أهلاً بك <strong>{{ username }}</strong>!<br>
+    تم إنشاء حسابك في «{{ site_title }}» بنجاح. أنت الآن على بُعد خطوة واحدة من تفعيل اشتراكك.
   </p>
-  <p class="muted" style="text-align:right;">
-    تم إنشاء حسابك بنجاح. الخطوة التالية: سجّل الدخول ثم فعّل حسابك بالكود للاستفادة من الاشتراك لمدة 30 يوماً.
-    نسعد بخدمتك، وللمساعدة تواصل معنا عبر واتساب أو البريد.
-  </p>
-  <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:12px;">
-    <a class="btn" href="{{ url_for('auth_login') }}">تسجيل الدخول</a>
-    <a class="btn btn-ghost" href="https://wa.me/966558030717" target="_blank" rel="noopener">واتساب</a>
-    <a class="btn btn-ghost" href="mailto:wchart.ksa@gmail.com">البريد</a>
+  <div class="welcome-actions">
+    <a class="btn btn-primary" href="{{ url_for('auth_login') }}">🔐 تسجيل الدخول وتفعيل الحساب</a>
+    <a class="btn btn-secondary" href="{{ whatsapp_url }}" target="_blank" rel="noopener">💬 تواصل عبر واتساب</a>
+    <a class="btn btn-secondary" href="mailto:{{ support_email }}">✉️ راسلنا عبر البريد</a>
   </div>
 </div>
 {% endblock %}

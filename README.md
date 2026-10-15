@@ -33,7 +33,7 @@ almchtrkyn/
 │   └── create_admin.py   # إنشاء حساب أدمن من سطر الأوامر
 ├── templates/            # قوالب Jinja2 (RTL)
 ├── static/
-│   ├── css/main.css
+│   ├── css/style.css
 │   ├── js/main.js
 │   └── logo.svg
 ├── backups/              # نسخ احتياطية تلقائية يومية

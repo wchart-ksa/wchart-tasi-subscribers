@@ -2,9 +2,9 @@
 {% block title %}السجلات — لوحة الأدمن{% endblock %}
 {% block content %}
 <div class="card">
-  <h2>سجلات النظام (Logs)</h2>
-  <div class="table-wrap">
-    <table>
+  <h2 class="card-title">📜 سجلات النظام (Logs)</h2>
+  <div class="table-responsive">
+    <table class="data-table">
       <thead>
         <tr>
           <th>التاريخ</th>
@@ -18,19 +18,27 @@
       <tbody>
         {% for l in logs %}
         <tr>
-          <td>{{ l.التاريخ }}</td>
+          <td style="white-space:nowrap;">{{ l.التاريخ }}</td>
           <td>{{ l.الفاعل }}</td>
           <td>{{ l.الإجراء }}</td>
           <td>{{ l.الهدف }}</td>
           <td style="max-width:360px;white-space:normal;">{{ l.التفاصيل }}</td>
-          <td>{{ l.النتيجة }}</td>
+          <td>
+            {% if l.النتيجة == 'تم' %}
+              <span class="badge badge-active">{{ l.النتيجة }}</span>
+            {% elif l.النتيجة in ['فشل','مرفوض','كود غير موجود'] %}
+              <span class="badge badge-expired">{{ l.النتيجة }}</span>
+            {% else %}
+              <span class="badge badge-neutral">{{ l.النتيجة }}</span>
+            {% endif %}
+          </td>
         </tr>
         {% else %}
-        <tr><td colspan="6">لا توجد سجلات حالياً</td></tr>
+        <tr><td colspan="6" style="text-align:center;color:var(--text-muted);">لا توجد سجلات حالياً</td></tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
-  <p class="muted small" style="margin-top:8px;">يُعرض آخر 500 سجل فقط لتفادي تحميل زائد.</p>
+  <p style="font-size:0.82rem;color:var(--text-muted);margin-top:10px;">يُعرض آخر 500 سجل فقط لتفادي التحميل الزائد.</p>
 </div>
 {% endblock %}

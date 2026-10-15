@@ -1,26 +1,66 @@
 {% extends "base.html" %}
-{% block title %}الرئيسية — مشتركين منصة دبليوشارت تاسي{% endblock %}
+{% block title %}الرئيسية — {{ site_title }}{% endblock %}
 {% block content %}
-<div class="card">
-  <img src="{{ url_for('static', filename='logo.svg') }}" alt="Wchart-tasi" class="hero-logo">
-  <h1>أهلاً بك في «مشتركين منصة دبليوشارت تاسي»</h1>
-  <p class="muted">
-    نظام بسيط لإدارة مشتركين المنصة: تسجيل حساب، تفعيل بالـكود، تمديد اشتراك من الأدمن،
-    مع حفاظ صارم على ملف Excel الخاص بالبيانات.
+<div class="card" style="text-align:center;">
+  <div style="display:flex;justify-content:center;margin-bottom:10px;color:var(--text-primary);">
+    {% include "_logo.html" %}
+  </div>
+  <h1 class="card-title" style="justify-content:center;font-size:1.6rem;">أهلاً بك في «{{ site_title }}»</h1>
+  <p style="color:var(--text-secondary);max-width:720px;margin:0 auto 22px;line-height:1.9;">
+    بوابة بسيطة وآمنة لإدارة ومتابعة مشتركي منصة <strong>دبليوشارت تاسي</strong>:
+    تسجيل حساب، تفعيل بالكود، تمديد الاشتراك عبر الإدارة، وتصدير التقارير —
+    مع الحفاظ الكامل على ملف بيانات Excel.
   </p>
-  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;">
+  <div class="filter-actions" style="justify-content:center;">
     {% if not current_user %}
-      <a class="btn" href="{{ url_for('auth_login') }}">تسجيل الدخول</a>
-      <a class="btn btn-secondary" href="{{ url_for('auth_register') }}">تسجيل حساب جديد</a>
+      <a class="btn btn-primary" href="{{ url_for('auth_login') }}">🔐 تسجيل الدخول</a>
+      <a class="btn btn-success" href="{{ url_for('auth_register') }}">🆕 تسجيل حساب جديد</a>
     {% else %}
       {% if current_user.role == 'admin' %}
-        <a class="btn" href="{{ url_for('admin_dashboard') }}">الذهاب للوحة الأدمن</a>
+        <a class="btn btn-primary" href="{{ url_for('admin_dashboard') }}">📊 لوحة الأدمن</a>
       {% else %}
-        <a class="btn" href="{{ url_for('user_dashboard') }}">لوحة المستخدم</a>
+        <a class="btn btn-primary" href="{{ url_for('user_dashboard') }}">🏠 لوحة المستخدم</a>
       {% endif %}
     {% endif %}
-    <a class="btn btn-ghost" href="https://wa.me/966558030717" target="_blank" rel="noopener">تواصل عبر واتساب</a>
-    <a class="btn btn-ghost" href="mailto:wchart.ksa@gmail.com">راسلنا عبر البريد</a>
+    <a class="btn btn-secondary" href="{{ whatsapp_url }}" target="_blank" rel="noopener">💬 تواصل عبر واتساب</a>
+    <a class="btn btn-secondary" href="mailto:{{ support_email }}">✉️ راسلنا عبر البريد</a>
   </div>
 </div>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon stat-icon-blue">🔑</div>
+    <div>
+      <div style="font-size:0.95rem;font-weight:800;color:var(--primary-blue);">تفعيل بالكود</div>
+      <div style="font-size:0.85rem;color:var(--text-secondary);">فعّل اشتراكك بكود من المنصة</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon stat-icon-green">⏳</div>
+    <div>
+      <div style="font-size:0.95rem;font-weight:800;color:var(--accent-green);">متابعة الاشتراك</div>
+      <div style="font-size:0.85rem;color:var(--text-secondary);">اعرف تاريخ الانتهاء والأيام المتبقية</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon stat-icon-amber">💬</div>
+    <div>
+      <div style="font-size:0.95rem;font-weight:800;color:var(--warning-amber);">دعم مباشر</div>
+      <div style="font-size:0.85rem;color:var(--text-secondary);">تواصل معنا عبر واتساب أو البريد</div>
+    </div>
+  </div>
+</div>
+
+{% if not current_user %}
+<div class="card">
+  <h3 class="card-title">🚀 كيف تبدأ؟</h3>
+  <ol style="color:var(--text-secondary);line-height:2.1;padding-inline-start:20px;">
+    <li>سجّل حساباً جديداً ببياناتك (اسم المستخدم، البريد، رقم الجوال).</li>
+    <li>احصل على كود التفعيل من المنصة عبر
+      <a href="{{ code_url }}" target="_blank" rel="noopener">الرابط الرسمي</a>.</li>
+    <li>ادخل إلى حسابك وفعّل الاشتراك بالكود.</li>
+    <li>تابع حالة اشتراكك وتاريخ الانتهاء من لوحة المستخدم.</li>
+  </ol>
+</div>
+{% endif %}
 {% endblock %}

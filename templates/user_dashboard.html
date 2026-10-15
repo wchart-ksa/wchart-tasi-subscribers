@@ -1,30 +1,69 @@
 {% extends "base.html" %}
-{% block title %}لوحة المستخدم — مشتركين منصة دبليوشارت تاسي{% endblock %}
+{% block title %}لوحة المستخدم — {{ site_title }}{% endblock %}
 {% block content %}
+{% set di = days_info(user.expires_at) %}
+
 <div class="card">
-  <h2>مرحباً، {{ user.username }}</h2>
-  <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-    <span class="badge {{ status_style(user.status) }}">{{ user.status }}</span>
-    {% set di = days_info(user.expires_at) %}
+  <h2 class="card-title">👋 مرحباً، {{ user.username }}</h2>
+  <div class="filter-actions">
+    <span class="badge {{ status_style(user.status) }}">الحالة: {{ user.status }}</span>
     <span class="badge {{ di.status_cls }}">{{ di.text }}</span>
   </div>
-  <div style="margin-top:14px;display:grid;gap:8px;">
-    <div>رقم الجوال: <strong>{{ user.phone }}</strong></div>
-    <div>البريد الإلكتروني: <strong>{{ user.email }}</strong></div>
-    <div>تاريخ التفعيل: <strong>{{ fmt_dt(user.activated_at) or '—' }}</strong></div>
-    <div>تاريخ الانتهاء: <strong>{{ fmt_dt(user.expires_at) or '—' }}</strong></div>
-    <div>آخر دخول: <strong>{{ fmt_dt(user.last_login) or '—' }}</strong></div>
-    <div>الأيام المتبقية: <strong>{{ di.days }}</strong></div>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon stat-icon-blue">📱</div>
+    <div>
+      <div style="font-size:0.82rem;color:var(--text-muted);">رقم الجوال</div>
+      <div style="font-size:1rem;font-weight:800;">{{ user.phone }}</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon stat-icon-purple">✉️</div>
+    <div>
+      <div style="font-size:0.82rem;color:var(--text-muted);">البريد الإلكتروني</div>
+      <div style="font-size:0.94rem;font-weight:700;word-break:break-all;">{{ user.email }}</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon stat-icon-green">📅</div>
+    <div>
+      <div style="font-size:0.82rem;color:var(--text-muted);">تاريخ التفعيل</div>
+      <div style="font-size:1rem;font-weight:800;">{{ fmt_dt(user.activated_at) or '—' }}</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon stat-icon-amber">⏳</div>
+    <div>
+      <div style="font-size:0.82rem;color:var(--text-muted);">تاريخ الانتهاء</div>
+      <div style="font-size:1rem;font-weight:800;">{{ fmt_dt(user.expires_at) or '—' }}</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon stat-icon-green">✅</div>
+    <div>
+      <div style="font-size:0.82rem;color:var(--text-muted);">الأيام المتبقية</div>
+      <div style="font-size:1.2rem;font-weight:900;">{{ di.days }}</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon stat-icon-blue">🕒</div>
+    <div>
+      <div style="font-size:0.82rem;color:var(--text-muted);">آخر دخول</div>
+      <div style="font-size:0.94rem;font-weight:700;">{{ fmt_dt(user.last_login) or '—' }}</div>
+    </div>
   </div>
 </div>
 
 <div class="card">
-  <h3>إدارة الحساب</h3>
-  <div style="display:flex;gap:10px;flex-wrap:wrap;">
-    <a class="btn btn-secondary" href="{{ url_for('user_profile') }}">تعديل بياناتي</a>
+  <h3 class="card-title">⚙️ إدارة الحساب</h3>
+  <div class="filter-actions">
+    <a class="btn btn-secondary" href="{{ url_for('user_profile') }}">✏️ تعديل بياناتي</a>
     {% if user.status != 'مفعل' and user.status != 'معطل' %}
-      <a class="btn" href="{{ url_for('user_activate_form') }}">تفعيل الحساب بالكود</a>
+      <a class="btn btn-success" href="{{ url_for('user_activate') }}">🔑 تفعيل الحساب بالكود</a>
     {% endif %}
+    <a class="btn btn-secondary" href="{{ whatsapp_url }}" target="_blank" rel="noopener">💬 الدعم عبر واتساب</a>
   </div>
 </div>
 {% endblock %}

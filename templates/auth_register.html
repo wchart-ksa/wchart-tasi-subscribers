@@ -1,37 +1,40 @@
 {% extends "base.html" %}
-{% block title %}تسجيل حساب جديد — مشتركين منصة دبليوشارت تاسي{% endblock %}
+{% block title %}تسجيل حساب جديد — {{ site_title }}{% endblock %}
 {% block content %}
-<img src="{{ url_for('static', filename='logo.svg') }}" alt="Wchart-tasi" class="hero-logo">
-<div class="card" style="max-width:560px;margin:0 auto;">
-  <h2>تسجيل حساب جديد</h2>
-  <form method="post" action="{{ url_for('auth_register') }}">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <div class="form-grid">
-      <div class="form-row">
-        <label for="username">اسم المستخدم</label>
-        <input id="username" name="username" type="text" required minlength="3" maxlength="32" pattern="[A-Za-z0-9_\-\.]+" title="أحرف وأرقام وعلامات _ - ." placeholder="username">
+<div class="auth-wrapper" style="max-width:560px;">
+  <div class="auth-header" style="color:var(--text-primary);">
+    {% include "_logo.html" %}
+  </div>
+  <div class="card">
+    <h2 class="card-title">🆕 تسجيل حساب جديد</h2>
+    <form method="post" action="{{ url_for('auth_register') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="form-group">
+        <label class="form-label" for="username">اسم المستخدم</label>
+        <input class="form-control" id="username" name="username" type="text" required minlength="3" maxlength="32" pattern="[A-Za-z0-9_\-\.]+" title="أحرف وأرقام وعلامات _ - ." placeholder="username">
       </div>
-      <div class="form-row">
-        <label for="email">البريد الإلكتروني</label>
-        <input id="email" name="email" type="email" required placeholder="name@example.com">
+      <div class="form-group">
+        <label class="form-label" for="email">البريد الإلكتروني</label>
+        <input class="form-control" id="email" name="email" type="email" required placeholder="name@example.com">
       </div>
-      <div class="form-row">
-        <label for="phone">رقم الجوال (سعودي)</label>
-        <input id="phone" name="phone" type="tel" required maxlength="12" pattern="^(05\d{8}|\+9665\d{8})$" title="05XXXXXXXX أو +9665XXXXXXXX" placeholder="05XXXXXXXX">
+      <div class="form-group">
+        <label class="form-label" for="phone">رقم الجوال (سعودي)</label>
+        <input class="form-control" id="phone" name="phone" type="tel" required maxlength="12" pattern="^(05\d{8}|\+9665\d{8})$" title="05XXXXXXXX أو +9665XXXXXXXX" placeholder="05XXXXXXXX">
+        <div class="form-label" style="font-weight:400;color:var(--text-muted);font-size:0.82rem;margin-top:6px;">الصيغة المقبولة: 05XXXXXXXX أو +9665XXXXXXXX</div>
       </div>
-      <div class="form-row">
-        <label for="password">كلمة السر</label>
-        <input id="password" name="password" type="password" required minlength="8" autocomplete="new-password" placeholder="8 أحرف على الأقل">
+      <div class="form-group">
+        <label class="form-label" for="password">كلمة السر</label>
+        <input class="form-control" id="password" name="password" type="password" required minlength="8" autocomplete="new-password" placeholder="8 أحرف على الأقل">
       </div>
-      <div class="form-row">
-        <label for="confirm">تأكيد كلمة السر</label>
-        <input id="confirm" name="confirm" type="password" required minlength="8" autocomplete="new-password" placeholder="أعد إدخال كلمة السر">
+      <div class="form-group">
+        <label class="form-label" for="confirm">تأكيد كلمة السر</label>
+        <input class="form-control" id="confirm" name="confirm" type="password" required minlength="8" autocomplete="new-password" placeholder="أعد إدخال كلمة السر">
       </div>
-      <div>
-        <button class="btn" type="submit">إنشاء الحساب</button>
-        <a class="btn btn-ghost" href="{{ url_for('auth_login') }}">لدي حساب بالفعل</a>
+      <button class="btn btn-success btn-block" type="submit">إنشاء الحساب</button>
+      <div style="text-align:center;margin-top:16px;font-size:0.9rem;color:var(--text-secondary);">
+        لديك حساب بالفعل؟ <a href="{{ url_for('auth_login') }}" style="font-weight:700;">سجّل الدخول</a>
       </div>
-    </div>
-  </form>
+    </form>
+  </div>
 </div>
 {% endblock %}

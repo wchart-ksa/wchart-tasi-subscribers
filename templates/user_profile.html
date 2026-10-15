@@ -1,58 +1,52 @@
 {% extends "base.html" %}
-{% block title %}حسابي — مشتركين منصة دبليوشارت تاسي{% endblock %}
+{% block title %}حسابي — {{ site_title }}{% endblock %}
 {% block content %}
-<div class="card" style="max-width:620px;">
-  <h2>تعديل بيانات الحساب</h2>
+<div class="card" style="max-width:640px;">
+  <h2 class="card-title">👤 تعديل بيانات الحساب</h2>
   <form method="post" action="{{ url_for('user_profile') }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <div class="form-grid">
-      <div class="form-row">
-        <label for="username">اسم المستخدم</label>
-        <input id="username" name="username" type="text" required value="{{ user.username }}" pattern="[A-Za-z0-9_\-\.]+">
-      </div>
-      <div class="form-row">
-        <label for="email">البريد الإلكتروني</label>
-        <input id="email" name="email" type="email" required value="{{ user.email }}">
-      </div>
-      <div class="form-row">
-        <label for="phone">رقم الجوال</label>
-        <input id="phone" name="phone" type="text" readonly value="{{ user.phone }}" title="رقم الجوال للعرض فقط ولا يمكن تعديله">
-      </div>
-      <div class="form-row">
-        <label for="current_password">كلمة السر الحالية (مطلوبة لتحديث كلمة السر)</label>
-        <input id="current_password" name="current_password" type="password" placeholder="كلمة السر الحالية">
-      </div>
-      <div class="form-row">
-        <label for="new_password">كلمة السر الجديدة</label>
-        <input id="new_password" name="new_password" type="password" minlength="8" placeholder="اتركها فارغة إن لم ترغب بالتغيير">
-      </div>
-      <div class="form-row">
-        <label for="confirm">تأكيد كلمة السر الجديدة</label>
-        <input id="confirm" name="confirm" type="password" minlength="8" placeholder="تأكيد كلمة السر الجديدة">
-      </div>
-      <div>
-        <button class="btn" type="submit">حفظ التعديلات</button>
-      </div>
+    <div class="form-group">
+      <label class="form-label" for="username">اسم المستخدم</label>
+      <input class="form-control" id="username" name="username" type="text" required value="{{ user.username }}" pattern="[A-Za-z0-9_\-\.]+">
     </div>
+    <div class="form-group">
+      <label class="form-label" for="email">البريد الإلكتروني</label>
+      <input class="form-control" id="email" name="email" type="email" required value="{{ user.email }}">
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="phone">رقم الجوال</label>
+      <input class="form-control" id="phone" name="phone" type="text" readonly value="{{ user.phone }}" title="رقم الجوال للعرض فقط ولا يمكن تعديله">
+      <div style="font-size:0.82rem;color:var(--text-muted);margin-top:6px;">رقم الجوال مرتبط باشتراكك ولا يمكن تعديله.</div>
+    </div>
+    <hr style="border:none;border-top:1px solid var(--border-color);margin:20px 0;">
+    <div class="form-group">
+      <label class="form-label" for="current_password">كلمة السر الحالية (مطلوبة لتحديث كلمة السر)</label>
+      <input class="form-control" id="current_password" name="current_password" type="password" placeholder="كلمة السر الحالية">
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="new_password">كلمة السر الجديدة</label>
+      <input class="form-control" id="new_password" name="new_password" type="password" minlength="8" placeholder="اتركها فارغة إن لم ترغب بالتغيير">
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="confirm">تأكيد كلمة السر الجديدة</label>
+      <input class="form-control" id="confirm" name="confirm" type="password" minlength="8" placeholder="تأكيد كلمة السر الجديدة">
+    </div>
+    <button class="btn btn-primary btn-block" type="submit">حفظ التعديلات</button>
   </form>
 </div>
 
-<div class="card" style="max-width:620px;margin-top:16px;border-color: rgba(220,38,38,0.4);">
-  <h3>تعطيل الحساب</h3>
-  <p class="muted">
-    حذف الحساب = تعطيل فقط. لا يُحذف أي صف أو بيانات من الملف. يتطلب إدخال كلمة السر للتأكيد.
+<div class="card" style="max-width:640px;border-color:rgba(239,68,68,0.4);">
+  <h3 class="card-title" style="color:var(--danger-red);">⚠️ تعطيل الحساب</h3>
+  <p style="color:var(--text-secondary);line-height:1.9;margin-bottom:16px;">
+    تعطيل الحساب يمنع الدخول مؤقتاً، ويمكن للإدارة إعادة تفعيله لاحقاً. بياناتك تبقى محفوظة.
   </p>
-  <form method="post" action="{{ url_for('user_deactivate') }}" onsubmit="return confirm('هل أنت متأكد من تعطيل حسابك؟ لا يمكن إلغاء التعطيل إلا من الأدمن.');">
+  <form method="post" action="{{ url_for('user_deactivate') }}" onsubmit="return confirm('هل أنت متأكد من تعطيل الحساب؟');">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <div class="form-grid">
-      <div class="form-row">
-        <label for="disable_password">كلمة السر الحالية للتأكيد</label>
-        <input id="disable_password" name="disable_password" type="password" required>
-      </div>
-      <div>
-        <button class="btn btn-danger" type="submit">تعطيل الحساب</button>
-      </div>
+    <div class="form-group">
+      <label class="form-label" for="disable_password">كلمة السر للتأكيد</label>
+      <input class="form-control" id="disable_password" name="disable_password" type="password" required placeholder="أدخل كلمة السر للتأكيد">
     </div>
+    <button class="btn btn-danger btn-block" type="submit">تعطيل الحساب</button>
   </form>
 </div>
 {% endblock %}

@@ -1,29 +1,73 @@
 {% extends "base.html" %}
-{% block title %}لوحة الأدمن — مشتركين منصة دبليوشارت تاسي{% endblock %}
+{% block title %}لوحة الأدمن — {{ site_title }}{% endblock %}
 {% block content %}
 <div class="card">
-  <h2>لوحة تحكم الأدمن</h2>
-  <div style="display:flex;gap:8px;flex-wrap:wrap;">
-    <span class="badge badge-neutral">إجمالي: {{ stats.total }}</span>
-    <span class="badge badge-ok">مفعلون: {{ stats.active }}</span>
-    <span class="badge badge-warn">منتهون: {{ stats.expired }}</span>
-    <span class="badge badge-danger">معطلون: {{ stats.disabled }}</span>
-    <span class="badge badge-neutral">غير مفعلين: {{ stats.inactive }}</span>
-    <span class="badge badge-neutral">أكواد متاحة: {{ stats.codes_avail }}</span>
-    <span class="badge badge-warn">ينتهي خلال 7 أيام: {{ stats.due7 }}</span>
+  <h2 class="card-title">📊 لوحة تحكم الأدمن</h2>
+  <p style="color:var(--text-secondary);">نظرة سريعة على حالة المشتركين والأكواد في النظام.</p>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon stat-icon-blue">👥</div>
+    <div>
+      <div style="font-size:1.6rem;font-weight:900;">{{ stats.total }}</div>
+      <div style="font-size:0.85rem;color:var(--text-secondary);">إجمالي المشتركين</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon stat-icon-green">✅</div>
+    <div>
+      <div style="font-size:1.6rem;font-weight:900;">{{ stats.active }}</div>
+      <div style="font-size:0.85rem;color:var(--text-secondary);">مفعّلون</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon stat-icon-red">⛔</div>
+    <div>
+      <div style="font-size:1.6rem;font-weight:900;">{{ stats.expired }}</div>
+      <div style="font-size:0.85rem;color:var(--text-secondary);">منتهون</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon stat-icon-amber">🚫</div>
+    <div>
+      <div style="font-size:1.6rem;font-weight:900;">{{ stats.disabled }}</div>
+      <div style="font-size:0.85rem;color:var(--text-secondary);">معطّلون</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon stat-icon-purple">🕓</div>
+    <div>
+      <div style="font-size:1.6rem;font-weight:900;">{{ stats.inactive }}</div>
+      <div style="font-size:0.85rem;color:var(--text-secondary);">غير مفعّلين</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon stat-icon-purple">🎟️</div>
+    <div>
+      <div style="font-size:1.6rem;font-weight:900;">{{ stats.codes_avail }}</div>
+      <div style="font-size:0.85rem;color:var(--text-secondary);">أكواد متاحة</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon stat-icon-amber">⚠️</div>
+    <div>
+      <div style="font-size:1.6rem;font-weight:900;">{{ stats.due7 }}</div>
+      <div style="font-size:0.85rem;color:var(--text-secondary);">ينتهي خلال 7 أيام</div>
+    </div>
   </div>
 </div>
 
 <div class="card">
-  <h3>إجراءات سريعة</h3>
-  <div style="display:flex;gap:10px;flex-wrap:wrap;">
-    <a class="btn" href="{{ url_for('admin_users') }}">قائمة المشتركين</a>
-    <a class="btn btn-secondary" href="{{ url_for('admin_codes') }}">إدارة الأكواد</a>
-    <a class="btn btn-secondary" href="{{ url_for('admin_extensions') }}">تمديد اشتراكات</a>
-    <a class="btn btn-secondary" href="{{ url_for('admin_logs') }}">سجلات النظام</a>
-    <a class="btn btn-secondary" href="{{ url_for('admin_reset_any') }}">إعادة تعيين كلمة سر مشترك</a>
-    <a class="btn btn-secondary" href="{{ url_for('admin_change_admin_password') }}">تعديل كلمة سر الأدمن / إضافة أدمن</a>
-    <a class="btn btn-secondary" href="{{ url_for('admin_users', export='csv') }}">تصدير المشتركين CSV</a>
+  <h3 class="card-title">⚡ إجراءات سريعة</h3>
+  <div class="filter-actions">
+    <a class="btn btn-primary" href="{{ url_for('admin_users') }}">👥 قائمة المشتركين</a>
+    <a class="btn btn-secondary" href="{{ url_for('admin_codes') }}">🎟️ إدارة الأكواد</a>
+    <a class="btn btn-secondary" href="{{ url_for('admin_extensions') }}">⏳ تمديد اشتراكات</a>
+    <a class="btn btn-secondary" href="{{ url_for('admin_logs') }}">📜 سجلات النظام</a>
+    <a class="btn btn-secondary" href="{{ url_for('admin_reset_any') }}">🔁 إعادة تعيين كلمة سر مشترك</a>
+    <a class="btn btn-secondary" href="{{ url_for('admin_change_admin_password') }}">🔒 كلمة سر الأدمن / إضافة أدمن</a>
+    <a class="btn btn-success" href="{{ url_for('admin_users', export='csv') }}">⬇️ تصدير المشتركين CSV</a>
   </div>
 </div>
 {% endblock %}

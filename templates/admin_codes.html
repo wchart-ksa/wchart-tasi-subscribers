@@ -2,59 +2,69 @@
 {% block title %}إدارة الأكواد — لوحة الأدمن{% endblock %}
 {% block content %}
 <div class="card">
-  <h2>إدارة أكواد التفعيل (code_1)</h2>
-  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
-    <span class="badge badge-ok">متاحة: {{ stats.avail }}</span>
-    <span class="badge badge-neutral">مستخدمة: {{ stats.used }}</span>
-    <span class="badge badge-neutral">الإجمالي: {{ stats.total }}</span>
+  <h2 class="card-title">🎟️ إدارة أكواد التفعيل (code_1)</h2>
+
+  <div class="stats-grid" style="margin-bottom:20px;">
+    <div class="stat-card">
+      <div class="stat-icon stat-icon-green">✅</div>
+      <div>
+        <div style="font-size:1.5rem;font-weight:900;">{{ stats.avail }}</div>
+        <div style="font-size:0.85rem;color:var(--text-secondary);">أكواد متاحة</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon stat-icon-amber">📤</div>
+      <div>
+        <div style="font-size:1.5rem;font-weight:900;">{{ stats.used }}</div>
+        <div style="font-size:0.85rem;color:var(--text-secondary);">أكواد مستخدمة</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon stat-icon-blue">📦</div>
+      <div>
+        <div style="font-size:1.5rem;font-weight:900;">{{ stats.total }}</div>
+        <div style="font-size:0.85rem;color:var(--text-secondary);">الإجمالي</div>
+      </div>
+    </div>
   </div>
 
   <form method="post" action="{{ url_for('admin_codes_add') }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <div class="form-grid">
-      <div class="form-row">
-        <label for="codes">أكواد جديدة (سطر لكل كود أو مفصولة بفواصل)</label>
-        <textarea id="codes" name="codes" rows="6" required placeholder="AB1234&#10;CD5678&#10;AB1234,CD5678"></textarea>
-      </div>
-      <div>
-        <button class="btn" type="submit">إضافة الأكواد</button>
-      </div>
+    <div class="form-group">
+      <label class="form-label" for="codes">إضافة أكواد جديدة (سطر لكل كود أو مفصولة بفاصلة)</label>
+      <textarea class="form-control" id="codes" name="codes" rows="4" required placeholder="CODE0001&#10;CODE0002&#10;أو CODE0001,CODE0002" style="font-family:monospace;"></textarea>
+      <div style="font-size:0.82rem;color:var(--text-muted);margin-top:6px;">أحرف وأرقام بطول 4–12، وتُقبل الأكواد المكرّرة وتُتجاهل تلقائياً.</div>
     </div>
+    <button class="btn btn-success" type="submit">➕ إضافة الأكواد</button>
   </form>
-
-  {% if added %}
-  <div class="alert alert-info" style="margin-top:10px;">
-    تمت إضافة {{ added }} كوداً. تم تجاهل التكرار وغير الصالح إن وُجد.
-  </div>
-  {% endif %}
 </div>
 
-<div class="card" style="margin-top:16px;">
-  <h3>الأكواد المتاحة (أحدث أولاً عرض مختصر)</h3>
-  <div class="table-wrap">
-    <table>
+<div class="card">
+  <h3 class="card-title">🟢 أكواد متاحة (عرض مختصر)</h3>
+  <div class="table-responsive">
+    <table class="data-table">
       <thead><tr><th>الكود</th><th>الحالة</th></tr></thead>
       <tbody>
         {% for c in avail_list %}
-        <tr><td>{{ c.code }}</td><td>{{ c.status or 'متاح' }}</td></tr>
+        <tr><td style="font-family:monospace;font-weight:700;">{{ c.code }}</td><td><span class="badge badge-active">{{ c.status or 'متاح' }}</span></td></tr>
         {% else %}
-        <tr><td colspan="2">لا توجد أكواد متاحة حالياً</td></tr>
+        <tr><td colspan="2" style="text-align:center;color:var(--text-muted);">لا توجد أكواد متاحة حالياً</td></tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
 </div>
 
-<div class="card" style="margin-top:16px;">
-  <h3>الأكواد المستخدمة</h3>
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>الكود</th><th>استخدم بواسطة (جوال)</th><th>تاريخ الاستخدام</th></tr></thead>
+<div class="card">
+  <h3 class="card-title">🔴 أكواد مستخدمة</h3>
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead><tr><th>الكود</th><th>استُخدم بواسطة (جوال)</th><th>تاريخ الاستخدام</th></tr></thead>
       <tbody>
         {% for c in used_list %}
-        <tr><td>{{ c.code }}</td><td>{{ c.used_by_phone }}</td><td>{{ c.used_at }}</td></tr>
+        <tr><td style="font-family:monospace;font-weight:700;">{{ c.code }}</td><td>{{ c.used_by_phone }}</td><td>{{ c.used_at }}</td></tr>
         {% else %}
-        <tr><td colspan="3">لا توجد أكواد مستخدمة</td></tr>
+        <tr><td colspan="3" style="text-align:center;color:var(--text-muted);">لا توجد أكواد مستخدمة</td></tr>
         {% endfor %}
       </tbody>
     </table>

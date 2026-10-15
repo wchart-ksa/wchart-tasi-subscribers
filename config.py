@@ -58,6 +58,20 @@ def load_config() -> dict:
         "PERMANENT_SESSION_LIFETIME_DAYS": _int("SESSION_DAYS", 7),
         "DATA_FILE": str(data_file),
         "BACKUP_DIR": str(backup_dir),
+        # بيانات الموقع العامة (تُعرض في القوالب)
+        "SITE_TITLE": os.environ.get("SITE_TITLE", "مشتركين منصة دبليوشارت تاسي"),
+        "WHATSAPP_NUMBER": os.environ.get("WHATSAPP_NUMBER", "0558030717"),
+        "SUPPORT_EMAIL": os.environ.get("SUPPORT_EMAIL", "wchart.ksa@gmail.com"),
+        "CODE_URL": os.environ.get(
+            "CODE_URL", "https://wchart.new.aryaf.sa/categories/tasi"
+        ),
+        "DISCLAIMER_TEXT": os.environ.get(
+            "DISCLAIMER_TEXT",
+            "هذه البوابة مخصّصة لإدارة ومتابعة اشتراكات مشتركي منصة دبليوشارت تاسي فقط، "
+            "ولا تقدّم أي توصيات استثمارية أو تحليلات مالية. جميع البيانات المعروضة لأغراض "
+            "إدارية وتنظيمية. الاشتراك شخصي وغير قابل للمشاركة. للاستفسار والدعم تواصل معنا "
+            "عبر قنوات التواصل الرسمية المذكورة أعلاه.",
+        ),
         # البريد عبر Gmail SMTP (STARTTLS على المنفذ 587)
         "SMTP_HOST": os.environ.get("SMTP_HOST", "smtp.gmail.com"),
         "SMTP_PORT": _int("SMTP_PORT", 587),

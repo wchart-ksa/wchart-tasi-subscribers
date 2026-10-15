@@ -1,30 +1,28 @@
 {% extends "base.html" %}
 {% block title %}إعادة تعيين كلمة سر مشترك — لوحة الأدمن{% endblock %}
 {% block content %}
-<div class="card" style="max-width:560px;">
-  <h2>إعادة تعيين كلمة سر مشترك (كبديل عبر واتساب)</h2>
-  <p class="muted">
-    يُنشئ النظام كلمة سر عشوائية جديدة للمشترك ويعرضها هنا. على الأدمن إيصالها للمشترك عبر واتساب.
-    لا يُرسل البريد تلقائياً في هذا المسار.
+<div class="card" style="max-width:640px;">
+  <h2 class="card-title">🔁 إعادة تعيين كلمة سر مشترك</h2>
+  <p style="color:var(--text-secondary);line-height:1.9;margin-bottom:16px;">
+    أنشئ كلمة سر جديدة لمشترك وأرسلها له عبر واتساب. هذه الطريقة يفترض أن تُستخدم عند تعذّر الاستعادة عبر البريد.
   </p>
   <form method="post" action="{{ url_for('admin_reset_any') }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <div class="form-grid">
-      <div class="form-row">
-        <label for="phone">رقم جوال المشترك</label>
-        <input id="phone" name="phone" type="text" required placeholder="05XXXXXXXX">
-      </div>
-      <div>
-        <button class="btn" type="submit">إنشاء كلمة سر جديدة</button>
-        <a class="btn btn-ghost" href="{{ url_for('admin_dashboard') }}">عودة للوحة الأدمن</a>
-      </div>
+    <div class="form-group">
+      <label class="form-label" for="phone">رقم جوال المشترك</label>
+      <input class="form-control" id="phone" name="phone" type="text" required placeholder="05XXXXXXXX">
+    </div>
+    <div class="filter-actions">
+      <button class="btn btn-danger" type="submit">🔁 إنشاء كلمة سر جديدة</button>
+      <a class="btn btn-secondary" href="{{ url_for('admin_dashboard') }}">عودة للوحة الأدمن</a>
     </div>
   </form>
+
   {% if new_pass %}
-  <div class="alert alert-info" style="margin-top:12px;">
-    كلمة السر الجديدة للمشترك <strong>{{ target_phone }}</strong>:<br>
-    <code style="font-size:1.2rem;letter-spacing:1px;">{{ new_pass }}</code>
-    <br><span class="muted small">يُرجى تسليمها للمشترك عبر واتساب فوراً.</span>
+  <div class="alert alert-success" style="margin-top:18px;flex-direction:column;align-items:flex-start;">
+    <div>كلمة السر الجديدة للمشترك <strong>{{ target_phone }}</strong>:</div>
+    <code style="font-size:1.3rem;letter-spacing:1px;background:var(--bg-card-alt);padding:8px 14px;border-radius:var(--radius-md);margin-top:8px;">{{ new_pass }}</code>
+    <span style="font-size:0.82rem;color:var(--text-secondary);margin-top:8px;">⚠️ يُرجى تسليمها للمشترك عبر واتساب فوراً وعدم مشاركتها.</span>
   </div>
   {% endif %}
 </div>

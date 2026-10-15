@@ -1,59 +1,110 @@
+{% macro brand_logo(prefix, size) %}
+<svg viewBox="0 0 360 104" role="img" aria-label="Wchart-tasi" xmlns="http://www.w3.org/2000/svg" style="height: {{ size }}px; width: auto; display: block;">
+  <defs>
+    <linearGradient id="{{ prefix }}bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0e2a47" />
+      <stop offset="100%" stop-color="#17436e" />
+    </linearGradient>
+    <linearGradient id="{{ prefix }}bull" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#34d399" />
+      <stop offset="100%" stop-color="#10b981" />
+    </linearGradient>
+    <linearGradient id="{{ prefix }}arrow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#38bdf8" />
+    </linearGradient>
+  </defs>
+  <g transform="translate(6, 6)">
+    <rect x="0" y="0" width="92" height="92" rx="22" fill="url(#{{ prefix }}bg)" />
+    <line x1="14" y1="30" x2="78" y2="30" stroke="#1e3a5f" stroke-width="1" stroke-dasharray="3,3" opacity="0.6" />
+    <line x1="14" y1="46" x2="78" y2="46" stroke="#1e3a5f" stroke-width="1" stroke-dasharray="3,3" opacity="0.6" />
+    <line x1="14" y1="62" x2="78" y2="62" stroke="#1e3a5f" stroke-width="1" stroke-dasharray="3,3" opacity="0.6" />
+    <line x1="26" y1="38" x2="26" y2="72" stroke="#10b981" stroke-width="2" stroke-linecap="round" />
+    <rect x="22" y="48" width="8" height="16" rx="2" fill="url(#{{ prefix }}bull)" />
+    <line x1="44" y1="26" x2="44" y2="66" stroke="#10b981" stroke-width="2" stroke-linecap="round" />
+    <rect x="40" y="32" width="8" height="22" rx="2" fill="url(#{{ prefix }}bull)" />
+    <line x1="62" y1="18" x2="62" y2="60" stroke="#10b981" stroke-width="2" stroke-linecap="round" />
+    <rect x="58" y="24" width="8" height="24" rx="2" fill="url(#{{ prefix }}bull)" />
+    <path d="M 18 68 Q 40 58, 58 36 L 76 20" fill="none" stroke="url(#{{ prefix }}arrow)" stroke-width="4" stroke-linecap="round" />
+    <polygon points="78,16 62,20 70,30" fill="#34d399" />
+  </g>
+  <g transform="translate(112, 60)">
+    <text font-family="'Segoe UI', system-ui, Tahoma, Arial, sans-serif" font-weight="800" font-size="40px">
+      <tspan fill="currentColor">Wchart</tspan><tspan fill="#38bdf8">-</tspan><tspan fill="#10b981">tasi</tspan>
+    </text>
+    <text y="24" font-family="'Segoe UI', system-ui, Tahoma, Arial, sans-serif" font-weight="600" font-size="13px" letter-spacing="2px" fill="#94a3b8">TASI VOLUME PROFILE</text>
+  </g>
+</svg>
+{% endmacro %}
 <!doctype html>
 <html lang="ar" dir="rtl" data-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>{% block title %}مشتركين منصة دبليوشارت تاسي{% endblock %}</title>
+  <title>{% block title %}{{ site_title }}{% endblock %}</title>
   <link rel="icon" href="{{ url_for('static', filename='logo.svg') }}" type="image/svg+xml">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-  <meta name="description" content="لوحة إدارة مشتركين منصة دبليوشارت تاسي">
-  {% block head %}{% endblock %}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {% block extra_css %}{% endblock %}
 </head>
 <body>
   <header class="site-header">
     <div class="container header-inner">
-      <a href="{{ url_for('home') }}" class="brand">
-        <img src="{{ url_for('static', filename='logo.svg') }}" alt="Wchart-tasi" class="brand-logo">
-        <span class="brand-text">مشتركين منصة دبليوشارت تاسي</span>
+      <a href="{{ url_for('home') }}" class="header-brand">
+        {{ brand_logo('h', 46) }}
+        <div class="header-title-box">
+          <span class="header-site-title">{{ site_title }}</span>
+          <span class="header-site-subtitle">Wchart-tasi Volume Profile</span>
+        </div>
       </a>
-      <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navMenu">
-        <span class="bar"></span><span class="bar"></span><span class="bar"></span>
-      </button>
-      <nav class="nav" id="navMenu">
-        <ul>
-          {% if current_user %}
-            {% if current_user.role == 'admin' %}
-              <li><a href="{{ url_for('admin_dashboard') }}">لوحة الأدمن</a></li>
-              <li><a href="{{ url_for('admin_users') }}">المشتركين</a></li>
-              <li><a href="{{ url_for('admin_codes') }}">إدارة الأكواد</a></li>
-              <li><a href="{{ url_for('admin_extensions') }}">تمديد الاشتراك</a></li>
-              <li><a href="{{ url_for('admin_logs') }}">السجلات</a></li>
-            {% else %}
-              <li><a href="{{ url_for('user_dashboard') }}">لوحة المستخدم</a></li>
-              <li><a href="{{ url_for('user_profile') }}">حسابي</a></li>
-            {% endif %}
-            <li><form action="{{ url_for('auth_logout') }}" method="post" class="inline-form">
-              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-              <button type="submit" class="link-btn">تسجيل الخروج</button>
-            </form></li>
+
+      <nav class="header-nav" id="mainNav">
+        {% if current_user %}
+          {% if current_user.role == 'admin' %}
+            <a href="{{ url_for('admin_dashboard') }}" class="nav-link {% if request.endpoint == 'admin_dashboard' %}active{% endif %}">📊 لوحة التحكم</a>
+            <a href="{{ url_for('admin_users') }}" class="nav-link {% if request.endpoint == 'admin_users' %}active{% endif %}">👥 المشتركين</a>
+            <a href="{{ url_for('admin_codes') }}" class="nav-link {% if request.endpoint == 'admin_codes' %}active{% endif %}">🎟️ الأكواد</a>
+            <a href="{{ url_for('admin_extensions') }}" class="nav-link {% if request.endpoint == 'admin_extensions' %}active{% endif %}">⏳ التمديدات</a>
+            <a href="{{ url_for('admin_logs') }}" class="nav-link {% if request.endpoint == 'admin_logs' %}active{% endif %}">📜 السجلات</a>
           {% else %}
-            <li><a href="{{ url_for('auth_login') }}">تسجيل الدخول</a></li>
-            <li><a href="{{ url_for('auth_register') }}">تسجيل جديد</a></li>
-            <li><a href="{{ url_for('auth_forgot') }}">نسيت كلمة السر</a></li>
+            <a href="{{ url_for('user_dashboard') }}" class="nav-link {% if request.endpoint == 'user_dashboard' %}active{% endif %}">🏠 لوحتي</a>
+            <a href="{{ url_for('user_profile') }}" class="nav-link {% if request.endpoint == 'user_profile' %}active{% endif %}">👤 حسابي</a>
+            <a href="{{ url_for('user_activate') }}" class="nav-link {% if request.endpoint in ['user_activate', 'user_activate_form'] %}active{% endif %}">🔑 تفعيل الاشتراك</a>
           {% endif %}
-          <li><button type="button" id="themeToggle" class="theme-btn" title="تبديل الوضع">🌙 / ☀️</button></li>
-        </ul>
+          <form action="{{ url_for('auth_logout') }}" method="post" style="display: inline;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="nav-link" style="color: var(--danger-red); background: none; border: none; cursor: pointer; font: inherit;">🚪 خروج</button>
+          </form>
+        {% else %}
+          <a href="{{ url_for('auth_login') }}" class="nav-link {% if request.endpoint == 'auth_login' %}active{% endif %}">دخول</a>
+          <a href="{{ url_for('auth_register') }}" class="nav-link {% if request.endpoint == 'auth_register' %}active{% endif %}">تسجيل جديد</a>
+        {% endif %}
       </nav>
+
+      <div class="header-actions">
+        <a href="{{ whatsapp_url }}" target="_blank" rel="noopener" class="btn-whatsapp-header" title="تواصل عبر واتساب">
+          <span>💬</span><span>واتساب</span>
+        </a>
+        <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="تبديل المظهر">
+          <span id="themeIcon">🌙</span>
+        </button>
+        <button type="button" class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="القائمة">☰</button>
+      </div>
     </div>
   </header>
 
-  <main class="main">
+  <main class="main-content">
     <div class="container">
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
-          <div class="alerts">
+          <div class="alerts-container">
             {% for category, message in messages %}
-              <div class="alert alert-{{ category }}">{{ message|safe }}</div>
+              <div class="alert alert-{{ category }}">
+                <span>{{ message|safe }}</span>
+                <button type="button" class="alert-close">&times;</button>
+              </div>
             {% endfor %}
           </div>
         {% endif %}
@@ -63,22 +114,37 @@
   </main>
 
   <footer class="site-footer">
-    <div class="container footer-inner">
-      <div class="footer-contact">
-        <a href="https://wa.me/966558030717" target="_blank" rel="noopener">واتساب: 0558030717</a>
-        <a href="mailto:wchart.ksa@gmail.com">البريد: wchart.ksa@gmail.com</a>
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand" style="color: #ffffff;">
+          {{ brand_logo('f', 42) }}
+          <div>
+            <h3 style="color: #ffffff; font-size: 1.1rem; font-weight: 800;">{{ site_title }}</h3>
+            <span style="font-size: 0.8rem; color: #34d399;">بوابة إدارة ومتابعة اشتراكات منصة دبليوشارت تاسي</span>
+          </div>
+        </div>
+
+        <div class="footer-contacts">
+          <a href="{{ whatsapp_url }}" target="_blank" rel="noopener" class="footer-contact-link">
+            <span>💬 واتساب: {{ whatsapp_number }}</span>
+          </a>
+          <a href="mailto:{{ support_email }}" class="footer-contact-link">
+            <span>✉️ البريد: {{ support_email }}</span>
+          </a>
+        </div>
       </div>
-      <div class="footer-disclaimer">
-        إخلاء مسؤولية: التداول في الأسهم ينطوي على مخاطر عالية وقد يؤدي إلى خسارة جزء من رأس المال أو كله.
-        المحتوى والتحليلات المعروضة في المنصة لأغراض تعليمية ومعلوماتية فقط، ولا تُعد توصية بالشراء أو البيع
-        أو الاحتفاظ بأي ورقة مالية، ولا نصيحة استثمارية أو مالية. الأداء السابق لا يضمن النتائج المستقبلية.
-        القرار الاستثماري مسؤوليتك الشخصية، وننصح بالرجوع إلى مستشار مالي مرخّص من هيئة السوق المالية قبل
-        اتخاذ أي قرار. لا تتحمل المنصة أو القائمون عليها أي مسؤولية عن أي خسائر مباشرة أو غير مباشرة.
+
+      <div class="footer-disclaimer-box">
+        <p class="footer-disclaimer-text">{{ disclaimer_text }}</p>
+      </div>
+
+      <div class="footer-bottom">
+        <p>جميع الحقوق محفوظة &copy; {{ now_year }} {{ site_title }}</p>
       </div>
     </div>
   </footer>
 
   <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-  {% block scripts %}{% endblock %}
+  {% block extra_js %}{% endblock %}
 </body>
 </html>

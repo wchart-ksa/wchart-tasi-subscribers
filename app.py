@@ -85,6 +85,16 @@ def before_request():
 
 @app.context_processor
 def inject_globals():
+    import datetime as _dt
+
+    wa = str(CFG.get("WHATSAPP_NUMBER", "")).strip()
+    wa_digits = "".join(ch for ch in wa if ch.isdigit())
+    if wa_digits.startswith("0"):
+        wa_intl = "966" + wa_digits[1:]
+    elif wa_digits.startswith("966"):
+        wa_intl = wa_digits
+    else:
+        wa_intl = wa_digits
     return {
         "current_user": g.current_user,
         "csrf_token": lambda: csrf.token(),
@@ -92,6 +102,13 @@ def inject_globals():
         "days_info": days_info,
         "status_style": status_style,
         "now_str": now_str,
+        "site_title": CFG.get("SITE_TITLE"),
+        "whatsapp_number": wa,
+        "whatsapp_url": f"https://wa.me/{wa_intl}",
+        "support_email": CFG.get("SUPPORT_EMAIL"),
+        "code_url": CFG.get("CODE_URL"),
+        "disclaimer_text": CFG.get("DISCLAIMER_TEXT"),
+        "now_year": _dt.date.today().year,
     }
 
 

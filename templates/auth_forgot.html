@@ -1,47 +1,47 @@
 {% extends "base.html" %}
-{% block title %}نسيت كلمة السر — مشتركين منصة دبليوشارت تاسي{% endblock %}
+{% block title %}نسيت كلمة السر — {{ site_title }}{% endblock %}
 {% block content %}
-<img src="{{ url_for('static', filename='logo.svg') }}" alt="Wchart-tasi" class="hero-logo">
-<div class="card" style="max-width:520px;margin:0 auto;">
-  <h2>نسيت كلمة السر</h2>
-  {% if step == 'request' %}
-  <form method="post" action="{{ url_for('auth_forgot') }}">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <p class="muted">أدخل جوالك أو بريدك أو اسم المستخدم. إن كان الحساب موجوداً، سيتم إرسال رمز استعادة كلمة السر إلى البريد المسجّل.</p>
-    <div class="form-grid">
-      <div class="form-row">
-        <label for="identifier">الجوال أو البريد أو اسم المستخدم</label>
-        <input id="identifier" name="identifier" type="text" required placeholder="0512345678 أو email@example.com أو username">
+<div class="auth-wrapper">
+  <div class="auth-header" style="color:var(--text-primary);">
+    {% include "_logo.html" %}
+  </div>
+  <div class="card">
+    <h2 class="card-title">🔁 نسيت كلمة السر</h2>
+    {% if step == 'request' %}
+    <form method="post" action="{{ url_for('auth_forgot') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <p style="color:var(--text-secondary);line-height:1.9;margin-bottom:18px;">
+        أدخل جوالك أو بريدك أو اسم المستخدم. إن كان الحساب موجوداً، سيُرسل رمز استعادة كلمة السر إلى البريد المسجّل.
+      </p>
+      <div class="form-group">
+        <label class="form-label" for="identifier">الجوال أو البريد أو اسم المستخدم</label>
+        <input class="form-control" id="identifier" name="identifier" type="text" required placeholder="05XXXXXXXX أو email@example.com أو username">
       </div>
-      <div>
-        <button class="btn" type="submit">إرسال الرمز</button>
-        <a class="btn btn-ghost" href="{{ url_for('auth_login') }}">عودة لتسجيل الدخول</a>
+      <button class="btn btn-primary btn-block" type="submit">إرسال الرمز</button>
+      <div style="text-align:center;margin-top:16px;">
+        <a href="{{ url_for('auth_login') }}">عودة لتسجيل الدخول</a>
       </div>
-    </div>
-  </form>
-  {% elif step == 'verify' %}
-  <form method="post" action="{{ url_for('auth_reset') }}">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <input type="hidden" name="phone" value="{{ phone }}">
-    <p class="muted">تم إرسال رمز من 6 أرقام إلى البريد المسجّل. صالح لمدة 15 دقيقة.</p>
-    <div class="form-grid">
-      <div class="form-row">
-        <label for="code">رمز الاستعادة (6 أرقام)</label>
-        <input id="code" name="code" type="text" maxlength="6" pattern="\d{6}" required inputmode="numeric" placeholder="123456">
+    </form>
+    {% elif step == 'verify' %}
+    <form method="post" action="{{ url_for('auth_reset') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="phone" value="{{ phone }}">
+      <div class="alert alert-info">تم إرسال رمز من 6 أرقام إلى البريد المسجّل. صالح لمدة 15 دقيقة.</div>
+      <div class="form-group">
+        <label class="form-label" for="code">رمز الاستعادة (6 أرقام)</label>
+        <input class="form-control" id="code" name="code" type="text" maxlength="6" pattern="\d{6}" required inputmode="numeric" placeholder="123456">
       </div>
-      <div class="form-row">
-        <label for="password">كلمة السر الجديدة</label>
-        <input id="password" name="password" type="password" minlength="8" required>
+      <div class="form-group">
+        <label class="form-label" for="password">كلمة السر الجديدة</label>
+        <input class="form-control" id="password" name="password" type="password" minlength="8" required>
       </div>
-      <div class="form-row">
-        <label for="confirm">تأكيد كلمة السر الجديدة</label>
-        <input id="confirm" name="confirm" type="password" minlength="8" required>
+      <div class="form-group">
+        <label class="form-label" for="confirm">تأكيد كلمة السر الجديدة</label>
+        <input class="form-control" id="confirm" name="confirm" type="password" minlength="8" required>
       </div>
-      <div>
-        <button class="btn" type="submit">تغيير كلمة السر</button>
-      </div>
-    </div>
-  </form>
-  {% endif %}
+      <button class="btn btn-primary btn-block" type="submit">تغيير كلمة السر</button>
+    </form>
+    {% endif %}
+  </div>
 </div>
 {% endblock %}
