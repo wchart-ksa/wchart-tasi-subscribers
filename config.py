@@ -76,4 +76,8 @@ def load_config() -> dict:
         "RESET_MAX_ATTEMPTS": _int("RESET_MAX_ATTEMPTS", 5),
         "RESET_LOCK_MINUTES": _int("RESET_LOCK_MINUTES", 15),
         "RESET_CODE_TTL_MINUTES": _int("RESET_CODE_TTL_MINUTES", 15),
+        # إعدادات خادم التطوير (يُشغَّل عبر python app.py)
+        "FLASK_HOST": os.environ.get("FLASK_HOST", "127.0.0.1"),
+        "FLASK_PORT": _int("FLASK_PORT", 5000),
+        "FLASK_DEBUG": os.environ.get("FLASK_DEBUG", "true").strip().lower() in ("1", "true", "yes", "on"),
     }
