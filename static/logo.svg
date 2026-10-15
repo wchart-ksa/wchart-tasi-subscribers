@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 104" role="img" aria-label="Wchart-tasi">
+  <!-- شعار منصة دبليوشارت تاسي: مربع بزوايا دائرية + شموع يابانية صاعدة + سهم صاعد + الاسم -->
+  <style>
+    .logo .tile { fill: #0E2A47; }
+    .logo .wick { stroke: #3DDC84; stroke-width: 4; stroke-linecap: round; }
+    .logo .up   { fill: #3DDC84; }
+    .logo .dn   { fill: #7FC3F5; }
+    .logo .arrow { fill: none; stroke: #3DDC84; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
+    .logo .word {
+      fill: #0E2A47;
+      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+      font-size: 38px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    /* داخل الصفحة: يتكيّف مع الوضع الداكن المختار يدوياً */
+    html[data-theme="dark"] .logo .word { fill: #E9EFF7; }
+    html[data-theme="dark"] .logo .tile { fill: #17436E; }
+    html[data-theme="light"] .logo .word { fill: #0E2A47; }
+    html[data-theme="light"] .logo .tile { fill: #0E2A47; }
+    /* كأيقونة تبويب/صورة مستقلة: يتكيّف مع نظام التشغيل */
+    @media (prefers-color-scheme: dark) {
+      .logo .word { fill: #E9EFF7; }
+      .logo .tile { fill: #17436E; }
+    }
+  </style>
+  <rect class="tile" x="3" y="6" width="92" height="92" rx="22"/>
+  <!-- شمعة أولى -->
+  <line class="wick" x1="26" y1="26" x2="26" y2="76"/>
+  <rect class="dn" x="20" y="42" width="12" height="24" rx="2"/>
+  <!-- شمعة ثانية صاعدة -->
+  <line class="wick" x1="49" y1="18" x2="49" y2="84"/>
+  <rect class="up" x="43" y="30" width="12" height="40" rx="2"/>
+  <!-- شمعة ثالثة -->
+  <line class="wick" x1="72" y1="30" x2="72" y2="74"/>
+  <rect class="up" x="66" y="38" width="12" height="26" rx="2"/>
+  <!-- سهم صاعد -->
+  <path class="arrow" d="M16 80 L38 62 L56 68 L80 34"/>
+  <path class="arrow" d="M64 33 L81 31 L79 48"/>
+  <!-- الاسم -->
+  <text class="word" x="108" y="68">Wchart-tasi</text>
+</svg>

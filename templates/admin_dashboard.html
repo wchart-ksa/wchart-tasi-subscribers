@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}لوحة الأدمن — مشتركين منصة دبليوشارت تاسي{% endblock %}
+{% block content %}
+<div class="card">
+  <h2>لوحة تحكم الأدمن</h2>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    <span class="badge badge-neutral">إجمالي: {{ stats.total }}</span>
+    <span class="badge badge-ok">مفعلون: {{ stats.active }}</span>
+    <span class="badge badge-warn">منتهون: {{ stats.expired }}</span>
+    <span class="badge badge-danger">معطلون: {{ stats.disabled }}</span>
+    <span class="badge badge-neutral">غير مفعلين: {{ stats.inactive }}</span>
+    <span class="badge badge-neutral">أكواد متاحة: {{ stats.codes_avail }}</span>
+    <span class="badge badge-warn">ينتهي خلال 7 أيام: {{ stats.due7 }}</span>
+  </div>
+</div>
+
+<div class="card">
+  <h3>إجراءات سريعة</h3>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+    <a class="btn" href="{{ url_for('admin_users') }}">قائمة المشتركين</a>
+    <a class="btn btn-secondary" href="{{ url_for('admin_codes') }}">إدارة الأكواد</a>
+    <a class="btn btn-secondary" href="{{ url_for('admin_extensions') }}">تمديد اشتراكات</a>
+    <a class="btn btn-secondary" href="{{ url_for('admin_logs') }}">سجلات النظام</a>
+    <a class="btn btn-secondary" href="{{ url_for('admin_reset_any') }}">إعادة تعيين كلمة سر مشترك</a>
+    <a class="btn btn-secondary" href="{{ url_for('admin_change_admin_password') }}">تعديل كلمة سر الأدمن / إضافة أدمن</a>
+    <a class="btn btn-secondary" href="{{ url_for('admin_users', export='csv') }}">تصدير المشتركين CSV</a>
+  </div>
+</div>
+{% endblock %}

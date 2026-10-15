@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}إعادة تعيين كلمة سر مشترك — لوحة الأدمن{% endblock %}
+{% block content %}
+<div class="card" style="max-width:560px;">
+  <h2>إعادة تعيين كلمة سر مشترك (كبديل عبر واتساب)</h2>
+  <p class="muted">
+    يُنشئ النظام كلمة سر عشوائية جديدة للمشترك ويعرضها هنا. على الأدمن إيصالها للمشترك عبر واتساب.
+    لا يُرسل البريد تلقائياً في هذا المسار.
+  </p>
+  <form method="post" action="{{ url_for('admin_reset_any') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="form-grid">
+      <div class="form-row">
+        <label for="phone">رقم جوال المشترك</label>
+        <input id="phone" name="phone" type="text" required placeholder="05XXXXXXXX">
+      </div>
+      <div>
+        <button class="btn" type="submit">إنشاء كلمة سر جديدة</button>
+        <a class="btn btn-ghost" href="{{ url_for('admin_dashboard') }}">عودة للوحة الأدمن</a>
+      </div>
+    </div>
+  </form>
+  {% if new_pass %}
+  <div class="alert alert-info" style="margin-top:12px;">
+    كلمة السر الجديدة للمشترك <strong>{{ target_phone }}</strong>:<br>
+    <code style="font-size:1.2rem;letter-spacing:1px;">{{ new_pass }}</code>
+    <br><span class="muted small">يُرجى تسليمها للمشترك عبر واتساب فوراً.</span>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

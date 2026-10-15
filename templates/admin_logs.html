@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}السجلات — لوحة الأدمن{% endblock %}
+{% block content %}
+<div class="card">
+  <h2>سجلات النظام (Logs)</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>التاريخ</th>
+          <th>الفاعل</th>
+          <th>الإجراء</th>
+          <th>الهدف</th>
+          <th>التفاصيل</th>
+          <th>النتيجة</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for l in logs %}
+        <tr>
+          <td>{{ l.التاريخ }}</td>
+          <td>{{ l.الفاعل }}</td>
+          <td>{{ l.الإجراء }}</td>
+          <td>{{ l.الهدف }}</td>
+          <td style="max-width:360px;white-space:normal;">{{ l.التفاصيل }}</td>
+          <td>{{ l.النتيجة }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6">لا توجد سجلات حالياً</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <p class="muted small" style="margin-top:8px;">يُعرض آخر 500 سجل فقط لتفادي تحميل زائد.</p>
+</div>
+{% endblock %}

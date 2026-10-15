@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}تسجيل الدخول — مشتركين منصة دبليوشارت تاسي{% endblock %}
+{% block content %}
+<img src="{{ url_for('static', filename='logo.svg') }}" alt="Wchart-tasi" class="hero-logo">
+<div class="card" style="max-width:520px;margin:0 auto;">
+  <h2>تسجيل الدخول</h2>
+  <form method="post" action="{{ url_for('auth_login') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="form-grid">
+      <div class="form-row">
+        <label for="identifier">رقم الجوال أو اسم المستخدم</label>
+        <input id="identifier" name="identifier" type="text" required autocomplete="username" placeholder="0512345678 أو username">
+      </div>
+      <div class="form-row">
+        <label for="password">كلمة السر</label>
+        <input id="password" name="password" type="password" required autocomplete="current-password" placeholder="كلمة السر">
+      </div>
+      <div>
+        <button class="btn" type="submit">دخول</button>
+        <a class="btn btn-ghost" href="{{ url_for('auth_forgot') }}">نسيت كلمة السر؟</a>
+      </div>
+      <div class="muted small">
+        ليس لديك حساب؟ <a href="{{ url_for('auth_register') }}">سجّل الآن</a>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,9 @@
+# متطلبات مشروع «مشتركين منصة دبليوشارت تاسي»
+# ثبّت عبر: pip install -r requirements.txt
+Flask>=3.0
+openpyxl>=3.1
+python-dotenv>=1.0
+# خادم إنتاجي بسيط (يعمل على ويندوز وماك ولينكس)
+waitress>=3.0
+# على خوادم لينكس يمكنك استخدام gunicorn بدلاً من waitress:
+# gunicorn>=21.0

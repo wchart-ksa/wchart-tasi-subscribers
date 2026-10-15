@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}تمديد الاشتراك — لوحة الأدمن{% endblock %}
+{% block content %}
+<div class="card" style="max-width:720px;">
+  <h2>تمديد اشتراك مشترك</h2>
+  <form method="post" action="{{ url_for('admin_extensions') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="form-grid">
+      <div class="form-row">
+        <label for="phones">أرقام الجوال (يمكن عدة أرقام، سطر لكل رقم أو مفصولة بفاصلة)</label>
+        <textarea id="phones" name="phones" rows="4" required placeholder="05XXXXXXXX&#10;05YYYYYYYY&#10;أو 05XXXXXXXX,05YYYYYYYY"></textarea>
+      </div>
+      <div class="form-row">
+        <label>خيارات سريعة</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          {% for d in [7,15,30,90] %}
+            <button class="btn btn-ghost" type="button" onclick="document.getElementById('days').value='{{ d }}'">{{ d }} يوم</button>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="form-row">
+        <label for="days">عدد الأيام (1–365)</label>
+        <input id="days" name="days" type="number" min="1" max="365" required>
+      </div>
+      <div class="form-row">
+        <label for="reason">السبب (اختياري)</label>
+        <input id="reason" name="reason" type="text" maxlength="120" placeholder="سبب التمديد">
+      </div>
+      <div>
+        <button class="btn" type="submit">تمديد</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+{% if results %}
+<div class="card" style="margin-top:16px;">
+  <h3>نتيجة التمديد</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>الجوال</th><th>النتيجة</th><th>تاريخ الانتهاء قبل</th><th>تاريخ الانتهاء بعد</th><th>عدد الأيام</th></tr></thead>
+      <tbody>
+        {% for r in results %}
+        <tr><td>{{ r.phone }}</td><td>{{ r.msg }}</td><td>{{ r.before }}</td><td>{{ r.after }}</td><td>{{ r.days }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

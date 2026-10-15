@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}لوحة المستخدم — مشتركين منصة دبليوشارت تاسي{% endblock %}
+{% block content %}
+<div class="card">
+  <h2>مرحباً، {{ user.username }}</h2>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+    <span class="badge {{ status_style(user.status) }}">{{ user.status }}</span>
+    {% set di = days_info(user.expires_at) %}
+    <span class="badge {{ di.status_cls }}">{{ di.text }}</span>
+  </div>
+  <div style="margin-top:14px;display:grid;gap:8px;">
+    <div>رقم الجوال: <strong>{{ user.phone }}</strong></div>
+    <div>البريد الإلكتروني: <strong>{{ user.email }}</strong></div>
+    <div>تاريخ التفعيل: <strong>{{ fmt_dt(user.activated_at) or '—' }}</strong></div>
+    <div>تاريخ الانتهاء: <strong>{{ fmt_dt(user.expires_at) or '—' }}</strong></div>
+    <div>آخر دخول: <strong>{{ fmt_dt(user.last_login) or '—' }}</strong></div>
+    <div>الأيام المتبقية: <strong>{{ di.days }}</strong></div>
+  </div>
+</div>
+
+<div class="card">
+  <h3>إدارة الحساب</h3>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+    <a class="btn btn-secondary" href="{{ url_for('user_profile') }}">تعديل بياناتي</a>
+    {% if user.status != 'مفعل' and user.status != 'معطل' %}
+      <a class="btn" href="{{ url_for('user_activate_form') }}">تفعيل الحساب بالكود</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

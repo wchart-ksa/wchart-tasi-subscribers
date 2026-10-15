@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}إدارة الأكواد — لوحة الأدمن{% endblock %}
+{% block content %}
+<div class="card">
+  <h2>إدارة أكواد التفعيل (code_1)</h2>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+    <span class="badge badge-ok">متاحة: {{ stats.avail }}</span>
+    <span class="badge badge-neutral">مستخدمة: {{ stats.used }}</span>
+    <span class="badge badge-neutral">الإجمالي: {{ stats.total }}</span>
+  </div>
+
+  <form method="post" action="{{ url_for('admin_codes_add') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="form-grid">
+      <div class="form-row">
+        <label for="codes">أكواد جديدة (سطر لكل كود أو مفصولة بفواصل)</label>
+        <textarea id="codes" name="codes" rows="6" required placeholder="AB1234&#10;CD5678&#10;AB1234,CD5678"></textarea>
+      </div>
+      <div>
+        <button class="btn" type="submit">إضافة الأكواد</button>
+      </div>
+    </div>
+  </form>
+
+  {% if added %}
+  <div class="alert alert-info" style="margin-top:10px;">
+    تمت إضافة {{ added }} كوداً. تم تجاهل التكرار وغير الصالح إن وُجد.
+  </div>
+  {% endif %}
+</div>
+
+<div class="card" style="margin-top:16px;">
+  <h3>الأكواد المتاحة (أحدث أولاً عرض مختصر)</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>الكود</th><th>الحالة</th></tr></thead>
+      <tbody>
+        {% for c in avail_list %}
+        <tr><td>{{ c.code }}</td><td>{{ c.status or 'متاح' }}</td></tr>
+        {% else %}
+        <tr><td colspan="2">لا توجد أكواد متاحة حالياً</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card" style="margin-top:16px;">
+  <h3>الأكواد المستخدمة</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>الكود</th><th>استخدم بواسطة (جوال)</th><th>تاريخ الاستخدام</th></tr></thead>
+      <tbody>
+        {% for c in used_list %}
+        <tr><td>{{ c.code }}</td><td>{{ c.used_by_phone }}</td><td>{{ c.used_at }}</td></tr>
+        {% else %}
+        <tr><td colspan="3">لا توجد أكواد مستخدمة</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

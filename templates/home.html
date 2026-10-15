@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}الرئيسية — مشتركين منصة دبليوشارت تاسي{% endblock %}
+{% block content %}
+<div class="card">
+  <img src="{{ url_for('static', filename='logo.svg') }}" alt="Wchart-tasi" class="hero-logo">
+  <h1>أهلاً بك في «مشتركين منصة دبليوشارت تاسي»</h1>
+  <p class="muted">
+    نظام بسيط لإدارة مشتركين المنصة: تسجيل حساب، تفعيل بالـكود، تمديد اشتراك من الأدمن،
+    مع حفاظ صارم على ملف Excel الخاص بالبيانات.
+  </p>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;">
+    {% if not current_user %}
+      <a class="btn" href="{{ url_for('auth_login') }}">تسجيل الدخول</a>
+      <a class="btn btn-secondary" href="{{ url_for('auth_register') }}">تسجيل حساب جديد</a>
+    {% else %}
+      {% if current_user.role == 'admin' %}
+        <a class="btn" href="{{ url_for('admin_dashboard') }}">الذهاب للوحة الأدمن</a>
+      {% else %}
+        <a class="btn" href="{{ url_for('user_dashboard') }}">لوحة المستخدم</a>
+      {% endif %}
+    {% endif %}
+    <a class="btn btn-ghost" href="https://wa.me/966558030717" target="_blank" rel="noopener">تواصل عبر واتساب</a>
+    <a class="btn btn-ghost" href="mailto:wchart.ksa@gmail.com">راسلنا عبر البريد</a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}تعديل كلمة سر الأدمن / إضافة أدمن — لوحة الأدمن{% endblock %}
+{% block content %}
+<div class="card" style="max-width:560px;">
+  <h2>تعديل كلمة سر الأدمن الحالي</h2>
+  <form method="post" action="{{ url_for('admin_change_admin_password') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="action" value="change">
+    <div class="form-grid">
+      <div class="form-row">
+        <label for="cur">كلمة السر الحالية</label>
+        <input id="cur" name="current_password" type="password" required>
+      </div>
+      <div class="form-row">
+        <label for="newp">كلمة السر الجديدة</label>
+        <input id="newp" name="new_password" type="password" minlength="8" required>
+      </div>
+      <div class="form-row">
+        <label for="conf">تأكيد كلمة السر الجديدة</label>
+        <input id="conf" name="confirm" type="password" minlength="8" required>
+      </div>
+      <div>
+        <button class="btn" type="submit">تحديث كلمة سر الأدمن</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="card" style="max-width:560px;margin-top:16px;">
+  <h2>إضافة أدمن جديد</h2>
+  <form method="post" action="{{ url_for('admin_change_admin_password') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="action" value="add">
+    <div class="form-grid">
+      <div class="form-row">
+        <label for="adm_cur">كلمة سر الأدمن الحالي للتأكيد</label>
+        <input id="adm_cur" name="admin_password" type="password" required>
+      </div>
+      <div class="form-row">
+        <label for="a_user">اسم المستخدم للأدمن الجديد</label>
+        <input id="a_user" name="username" type="text" required pattern="[A-Za-z0-9_\-\.]+">
+      </div>
+      <div class="form-row">
+        <label for="a_phone">رقم الجوال للأدمن الجديد</label>
+        <input id="a_phone" name="phone" type="tel" required pattern="^(05\d{8}|\+9665\d{8})$" placeholder="05XXXXXXXX">
+      </div>
+      <div class="form-row">
+        <label for="a_email">البريد الإلكتروني للأدمن الجديد</label>
+        <input id="a_email" name="email" type="email" required>
+      </div>
+      <div class="form-row">
+        <label for="a_pass">كلمة السر للأدمن الجديد</label>
+        <input id="a_pass" name="new_password" type="password" minlength="8" required>
+      </div>
+      <div class="form-row">
+        <label for="a_conf">تأكيد كلمة السر للأدمن الجديد</label>
+        <input id="a_conf" name="confirm" type="password" minlength="8" required>
+      </div>
+      <div>
+        <button class="btn" type="submit">إضافة أدمن</button>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}

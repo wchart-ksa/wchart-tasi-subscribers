@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}رسالة الترحيب — مشتركين منصة دبليوشارت تاسي{% endblock %}
+{% block content %}
+<div class="card" style="max-width:640px;margin:0 auto;text-align:center;">
+  <img src="{{ url_for('static', filename='logo.svg') }}" alt="Wchart-tasi" class="hero-logo">
+  <h2>تم إنشاء الحساب بنجاح</h2>
+  <p>
+    أهلاً وسهلاً بك يا <strong>{{ username }}</strong> في «مشتركين منصة دبليوشارت تاسي» 🎉
+  </p>
+  <p class="muted" style="text-align:right;">
+    تم إنشاء حسابك بنجاح. الخطوة التالية: سجّل الدخول ثم فعّل حسابك بالكود للاستفادة من الاشتراك لمدة 30 يوماً.
+    نسعد بخدمتك، وللمساعدة تواصل معنا عبر واتساب أو البريد.
+  </p>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:12px;">
+    <a class="btn" href="{{ url_for('auth_login') }}">تسجيل الدخول</a>
+    <a class="btn btn-ghost" href="https://wa.me/966558030717" target="_blank" rel="noopener">واتساب</a>
+    <a class="btn btn-ghost" href="mailto:wchart.ksa@gmail.com">البريد</a>
+  </div>
+</div>
+{% endblock %}

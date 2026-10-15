@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}تفعيل الحساب — مشتركين منصة دبليوشارت تاسي{% endblock %}
+{% block content %}
+<img src="{{ url_for('static', filename='logo.svg') }}" alt="Wchart-tasi" class="hero-logo">
+<div class="card" style="max-width:560px;margin:0 auto;">
+  <h2>تفعيل الحساب</h2>
+  <p class="muted">
+    الحالة حالياً: <span class="badge {{ status_style(user.status) }}">{{ user.status }}</span>
+    {% if user.expires_at %} | ينتهي في {{ fmt_dt(user.expires_at) }}{% endif %}
+    {% if user.activated_at %} | مُفعل منذ {{ fmt_dt(user.activated_at) }}{% endif %}
+  </p>
+  {% if user.status == 'مفعل' %}
+    <div class="alert alert-info">حسابك مفعل وساري المفعول. لا حاجة لاستهلاك كود جديد.</div>
+    <a class="btn" href="{{ url_for('user_dashboard') }}">الذهاب للوحة المستخدم</a>
+  {% else %}
+    <div class="form-row">
+      <a class="btn btn-ghost" href="https://wchart.new.aryaf.sa/categories/tasi" target="_blank" rel="noopener">احصل على الكود</a>
+      <p class="muted small">سيُفتح الرابط في تبويب جديد</p>
+    </div>
+    <form method="post" action="{{ url_for('user_activate') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="form-grid">
+        <div class="form-row">
+          <label for="code">أدخل كود التفعيل</label>
+          <input id="code" name="code" type="text" maxlength="16" required placeholder="XXXXXX" autocomplete="one-time-code">
+        </div>
+        <div>
+          <button class="btn" type="submit">تفعيل</button>
+        </div>
+      </div>
+    </form>
+  {% endif %}
+</div>
+{% endblock %}
