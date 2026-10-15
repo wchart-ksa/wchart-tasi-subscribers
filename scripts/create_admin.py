@@ -14,14 +14,14 @@ try:
 except Exception:
     load_dotenv = None
 
-BASE_DIR = Path(__file__).resolve().parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 if load_dotenv:
     load_dotenv(BASE_DIR / ".env")
 
 sys.path.insert(0, str(BASE_DIR))
 
 from config import load_config
-from common import ROLE_ADMIN, STATUS_ACTIVE, normalize_phone, now_str
+from common import ROLE_ADMIN, STATUS_ACTIVE, normalize_phone, is_valid_phone, now_str
 from security import PH
 from storage.excel_store import ExcelStore, append_row, log_row, sheet_rows, USERS
 
@@ -41,7 +41,7 @@ def main():
     store.init_file()
 
     phone = normalize_phone(args.phone)
-    if len(phone) != 11 or not phone.startswith("05"):
+    if not is_valid_phone(phone):
         print("خطأ: رقم الجوال يجب أن يكون بصيغة سعودية 05XXXXXXXX")
         sys.exit(1)
 

@@ -176,12 +176,15 @@ class CSRFProtect:
         return session["_csrf"]
 
     def token(self) -> str:
-        # توليد/تحديث خفيف
+        # يعيد نفس الرمز خلال صلاحيته (ساعة) حتى لو استُدعي عدة مرات في الصفحة
         from flask import session
 
-        token = secrets.token_urlsafe(32)
-        session["_csrf_token"] = token
-        session["_csrf_time"] = time.time()
+        token = session.get("_csrf_token")
+        ts = session.get("_csrf_time", 0.0)
+        if not token or (time.time() - ts) > 3600:
+            token = secrets.token_urlsafe(32)
+            session["_csrf_token"] = token
+            session["_csrf_time"] = time.time()
         return token
 
     def verify(self, token: str | None) -> bool:

@@ -19,7 +19,7 @@ import shutil
 import threading
 import time
 from contextlib import contextmanager
-from datetime import datetime
+from datetime import date, datetime, time as dtime, timedelta
 from pathlib import Path
 
 import openpyxl
@@ -201,6 +201,13 @@ def _last_used_row(ws) -> int:
     return 1
 
 
+def _cell(value):
+    """يجهّز قيمة خلية للكتابة في Excel: يؤمّن النصوص ويحوّل الأنواع غير المدعومة (UUID/Path) إلى نص."""
+    if value is None or isinstance(value, (str, int, float, bool, datetime, date, dtime, timedelta)):
+        return _safe(value) if isinstance(value, str) else value
+    return str(value)
+
+
 def append_row(wb, sheet: str, data: dict) -> int:
     """يضيف صفوفاً جديداً بقيم محيّدة (بدون حذف أي صف قائم). يعيد رقم الصف."""
     _check_sheet(sheet)
@@ -208,10 +215,7 @@ def append_row(wb, sheet: str, data: dict) -> int:
     row_num = _last_used_row(ws) + 1
     for col, key in enumerate(_header_map(ws), start=1):
         if key and key in data:
-            value = data[key]
-            if isinstance(value, str):
-                value = _safe(value)
-            ws.cell(row=row_num, column=col, value=value)
+            ws.cell(row=row_num, column=col, value=_cell(data[key]))
     return row_num
 
 
@@ -221,10 +225,7 @@ def set_row(wb, sheet: str, row_number: int, data: dict) -> None:
     ws = wb[sheet]
     for col, key in enumerate(_header_map(ws), start=1):
         if key and key in data:
-            value = data[key]
-            if isinstance(value, str):
-                value = _safe(value)
-            ws.cell(row=row_number, column=col, value=value)
+            ws.cell(row=row_number, column=col, value=_cell(data[key]))
 
 
 def log_row(wb, actor, action, target, details="", result="") -> None:
