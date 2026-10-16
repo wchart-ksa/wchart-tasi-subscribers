@@ -24,7 +24,7 @@ from pathlib import Path
 
 import openpyxl
 
-from common import DT_FMT, excel_safe, now_str, parse_dt, excel_safe as _safe
+from common import DT_FMT, now_str, parse_dt, excel_safe as _safe
 
 try:  # ويندوز
     import msvcrt
@@ -49,18 +49,11 @@ SHEET_HEADERS = {
     CODES: ["code", "status", "used_by_phone", "used_at"],
     LOGS: ["التاريخ", "الفاعل", "الإجراء", "الهدف", "التفاصيل", "النتيجة"],
     EXTENSIONS: [
-        "التاريخ", "الأدمن", "رقم الجوال المشترك", "تاريخ الانتهاء قبل",
+        "التاريخ", "الأدمن", "رقم جوال المشترك", "تاريخ الانتهاء قبل",
         "تاريخ الانتهاء بعد", "عدد الأيام", "السبب",
     ],
     RESETS: ["phone", "code_hash", "expires_at", "attempts"],
 }
-
-# تحقق من أسماء الأعمدة الفعلية في ملف المستخدم (يبقى الملف هو المرجع)
-EXT_HEADERS_ON_DISK = [
-    "التاريخ", "الأدمن", "رقم جوال المشترك", "تاريخ الانتهاء قبل",
-    "تاريخ الانتهاء بعد", "عدد الأيام", "السبب",
-]
-SHEET_HEADERS[EXTENSIONS] = EXT_HEADERS_ON_DISK
 
 _LOCK_TIMEOUT = 20.0  # أقصى انتظار لقفل الملف بالثواني
 
@@ -318,8 +311,6 @@ class ExcelStore:
                 else:
                     wb.close()
         finally:
-            if wb is not None and not getattr(self._thread_local, "writing", True):
-                pass
             _PROCESS_LOCK.release()
             self._file_lock.release()
             self._thread_local.writing = False

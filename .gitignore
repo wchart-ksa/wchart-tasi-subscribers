@@ -5,6 +5,9 @@
 __pycache__/
 *.pyc
 
+# أدوات الاختبار
+.pytest_cache/
+
 # بيئات افتراضية
 .venv/
 venv/

@@ -12,14 +12,10 @@ from __future__ import annotations
 
 import hashlib
 import hmac
-import os
-import re
 import secrets
 import smtplib
-import threading
 import time
 from dataclasses import dataclass
-from datetime import datetime, timedelta
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
@@ -27,10 +23,6 @@ try:
     import bcrypt
 except Exception:
     bcrypt = None  # سيُرفض إنشاء سيسلت جديد إن غير متوفّر، لكن الملف فيه قيم موجودة
-
-from common import excel_safe, now_dt
-
-_LIMITS = threading.local()
 
 
 @dataclass(frozen=True)
@@ -78,10 +70,10 @@ class RateLimiter:
         if not ok:
             lst.append((now, False))
             if len(lst) >= b.max:
-                self._locked[b.key] = now + b.lock
+                self._locked[key] = now + b.lock
         else:
             # نجاح — يمسح أي قفل سابق وسجل الفشل
-            self._locked.pop(b.key, None)
+            self._locked.pop(key, None)
             lst.clear()
 
     def prune(self) -> None:
@@ -167,13 +159,6 @@ PH = PasswordHasher()
 
 class CSRFProtect:
     """حماية بسيطة ضد CSRF للفورمات POST عبر الجلسة."""
-
-    def _token_name(self) -> str:
-        from flask import session
-
-        if "_csrf" not in session:
-            session["_csrf"] = secrets.token_hex(24)
-        return session["_csrf"]
 
     def token(self) -> str:
         # يعيد نفس الرمز خلال صلاحيته (ساعة) حتى لو استُدعي عدة مرات في الصفحة

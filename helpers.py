@@ -1,12 +1,9 @@
 """
 وظائف المساعدة لطبقة العرض (حقن القوالب).
 """
-from datetime import datetime
-
 from common import (
-    DT_FMT, ROLE_ADMIN, ROLE_USER, STATUS_ACTIVE, STATUS_DISABLED,
-    STATUS_EXPIRED, STATUS_INACTIVE, days_left, is_expired, now_dt, normalize_phone,
-    parse_dt,
+    STATUS_ACTIVE, STATUS_DISABLED, STATUS_EXPIRED, STATUS_INACTIVE,
+    days_left, parse_dt,
 )
 
 
@@ -24,8 +21,6 @@ def days_info(expires_at):
         return {"days": 0, "status_cls": "badge-warn", "text": "منتهي"}
     if left <= 7:
         return {"days": left, "status_cls": "badge-warn", "text": f"متبقي {left} أيام"}
-    if left <= 14:
-        return {"days": left, "status_cls": "badge-ok", "text": f"متبقي {left} أيام"}
     return {"days": left, "status_cls": "badge-ok", "text": f"متبقي {left} أيام"}
 
 
@@ -40,7 +35,3 @@ def status_style(status):
     if s == STATUS_INACTIVE:
         return "badge-neutral"
     return "badge-neutral"
-
-
-def is_phone_display_only():
-    return True

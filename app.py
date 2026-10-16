@@ -10,38 +10,26 @@ from __future__ import annotations
 
 import csv
 import io
-import os
 import secrets
 from datetime import datetime, timedelta
-from io import BytesIO
-from urllib.parse import unquote
 
 from flask import (
     Flask, request, session, redirect, url_for, render_template,
-    flash, g, make_response, abort, current_app,
+    flash, g, make_response, abort,
 )
 
 from common import (
     ROLE_ADMIN, ROLE_USER, STATUS_ACTIVE, STATUS_DISABLED, STATUS_EXPIRED,
-    STATUS_INACTIVE, add_days, days_left, is_expired,
+    STATUS_INACTIVE, days_left, is_expired,
     normalize_phone, is_valid_phone, now_dt, now_str, parse_dt, csv_safe,
 )
 from config import load_config
 from helpers import days_info, status_style, fmt_dt as _fmt_dt
-from security import PH, csrf, RL, send_mail, SecurityError
+from security import PH, csrf, RL, send_mail
 from storage.excel_store import (
-    ExcelStore, sheet_rows, append_row, set_row, log_row, USERS, CODES,
+    ExcelStore, append_row, set_row, log_row, USERS, CODES,
     LOGS, EXTENSIONS, RESETS,
 )
-
-# تعيين fmt_dt في helpers ليُستخدم في القوالب إن احتُج (بعض القوالب استوردت مباشرة)
-try:
-    import helpers as _h
-    _h.fmt_dt = _fmt_dt
-    _h.days_info = days_info
-    _h.status_style = status_style
-except Exception:
-    pass
 
 CFG = load_config()
 store = ExcelStore(CFG["DATA_FILE"], CFG["BACKUP_DIR"])
@@ -327,12 +315,6 @@ def auth_forgot():
         expires_at = (now_dt() + timedelta(minutes=CFG["RESET_CODE_TTL_MINUTES"])).strftime("%Y-%m-%d %H:%M:%S")
         # حفظ في Resets (إنشاؤه يمسكه write)
         with store.write() as wb:
-            # تنظيف رموز سابقة لهذا الجوال
-            rows = sheet_rows(wb, RESETS)
-            for r in rows:
-                if r.get("phone") == phone and r.get("_row"):
-                    # حذف صف سابق — لكننا نحافظ على الملف ولا نحذف صفوف خارج متطلبات؛ ببساطة نكتب فوق فعلاً نضيف جديد ونترك القديم (لا يمنع العمل)
-                    pass
             append_row(wb, RESETS, {
                 "phone": phone,
                 "code_hash": code_hash,
@@ -340,7 +322,7 @@ def auth_forgot():
                 "attempts": "0",
             })
             log_row(wb, phone, "طلب رمز استعادة", u.get("username"), f"email={u.get('email')}", "تم")
-        RL.record(key, ok=True, typ="reset_req")
+        RL.record(key, ok=False, typ="reset_req")
         # إرسال البريد
         try:
             send_reset_email(u, code, CFG)
@@ -419,13 +401,11 @@ def auth_reset():
     # التحقق
     c_hash = __import__("hashlib").sha256(code.encode("utf-8")).hexdigest()
     if not __import__("hmac").compare_digest(c_hash, code_row.get("code_hash", "")):
-        # زيادة attempts إن وُجد عمود
+        # زيادة عدّاد المحاولات على الصف نفسه (للتوثيق)
         try:
             att = int(code_row.get("attempts") or "0") + 1
             if code_row.get("_row"):
                 store.update(RESETS, int(code_row["_row"]), {"attempts": str(att)})
-            if att >= CFG["RESET_MAX_ATTEMPTS"]:
-                RL.record(f"reset:try:{phone}", ok=False, typ="reset_try")
         except Exception:
             pass
         RL.record(f"reset:try:{phone}", ok=False, typ="reset_try")
@@ -755,7 +735,7 @@ def admin_codes():
         "avail": sum(1 for x in codes if (x.get("status") or "").strip()=="" or (x.get("status") or "").strip()=="متاح"),
         "used": sum(1 for x in codes if (x.get("status") or "").strip()=="مستخدم"),
     }
-    avail_list = sorted([c for c in codes if stats["avail"]>=0 and ((c.get("status") or "").strip()=="" or (c.get("status") or "").strip()=="متاح")], key=lambda x: x.get("code",""))[:200]
+    avail_list = sorted([c for c in codes if (c.get("status") or "").strip() in ("", "متاح")], key=lambda x: x.get("code", ""))[:200]
     used_list = sorted([c for c in codes if (c.get("status") or "").strip()=="مستخدم"], key=lambda x: x.get("used_at",""), reverse=True)[:200]
     return render_template("admin_codes.html", stats=stats, avail_list=avail_list, used_list=used_list, added=added)
 
@@ -871,6 +851,22 @@ def admin_change_admin_password():
             flash("تم إضافة حساب أدمن جديد بنجاح","success")
             return redirect(url_for("admin_dashboard"))
     return render_template("admin_change_admin.html")
+
+
+# ----------- صفحات الأخطاء (بهوية الموقع)
+@app.errorhandler(403)
+def error_403(_e):
+    return render_template("error.html", code=403, message="غير مصرح لك بالوصول إلى هذه الصفحة"), 403
+
+
+@app.errorhandler(404)
+def error_404(_e):
+    return render_template("error.html", code=404, message="الصفحة المطلوبة غير موجودة"), 404
+
+
+@app.errorhandler(500)
+def error_500(_e):
+    return render_template("error.html", code=500, message="حدث خطأ غير متوقع، حاول مرة أخرى"), 500
 
 
 if __name__ == "__main__":
