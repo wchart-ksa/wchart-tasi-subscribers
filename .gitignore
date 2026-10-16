@@ -16,4 +16,5 @@ venv/
 backups/
 *.xlsx
 *.lock
+*.tmp
 !data/.gitkeep

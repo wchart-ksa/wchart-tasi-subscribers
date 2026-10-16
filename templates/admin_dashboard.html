@@ -68,6 +68,7 @@
     <a class="btn btn-secondary" href="{{ url_for('admin_reset_any') }}">🔁 إعادة تعيين كلمة سر مشترك</a>
     <a class="btn btn-secondary" href="{{ url_for('admin_change_admin_password') }}">🔒 كلمة سر الأدمن / إضافة أدمن</a>
     <a class="btn btn-success" href="{{ url_for('admin_users', export='csv') }}">⬇️ تصدير المشتركين CSV</a>
+    <a class="btn btn-success" href="{{ url_for('admin_activation_report') }}">📄 تقرير التفعيل (Excel)</a>
   </div>
 </div>
 {% endblock %}

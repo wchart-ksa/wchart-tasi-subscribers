@@ -49,12 +49,16 @@
 7. `/admin/logs` → آخر 500 حدث.
 8. `/admin/reset-any` → توليد كلمة سر جديدة لمشترك.
 9. `/admin/change-admin` → تغيير كلمة سر الأدمن أو إضافة أدمن جديد.
+10. `/admin/activation-report` → تنزيل ملف Excel للمفعّلين (عمودان: رقم الجوال، حالة التفعيل).
 
 ### قواعد عابرة
 - CSRF إلزامي على كل POST (رمز من الجلسة، صلاحية ساعة).
 - حد محاولات: دخول 5/15د، تفعيل 5/15د، طلب استعادة 3/ساعة، تحقق استعادة 5/15د.
 - كل كتابة في Excel داخل قفل + نسخة احتياطية يومية + استبدال ذري.
 - تسجيل كل الأحداث في ورقة Logs.
+- تقرير التفعيل (`activated_subscribers.xlsx`) ملف مشتق يُعاد بناؤه بعد كل تغيّر في
+  حالة اشتراك (تفعيل، تعطيل، تمديد، انتهاء تلقائي) + الصيانة اليومية. يُدرَج من فعّل
+  كوداً يوماً ما (له `activated_at` أو حالته ليست «غير مفعل»)، والحالة = «مفعل» أو «غير مفعل».
 
 ---
 
@@ -62,12 +66,13 @@
 
 | الملف | المسؤولية |
 |---|---|
-| `app.py` | تطبيق Flask: 22 مساراً، `before_request`، حقن متغيرات القوالب، ضوابط الدخول/الأدوار |
+| `app.py` | تطبيق Flask: 23 مساراً، `before_request`، حقن متغيرات القوالب، ضوابط الدخول/الأدوار |
 | `config.py` | تحميل الإعدادات من البيئة/.env + قيم الموقع العامة |
 | `common.py` | ثوابت الحالة/الدور، تحويل التواريخ، توحيد الجوال السعودي، تحييد Excel/CSV |
 | `helpers.py` | دوال العرض (`fmt_dt`, `days_info`, `status_style`) |
 | `security.py` | bcrypt/SHA، CSRF، RateLimiter، إرسال البريد SMTP |
 | `storage/excel_store.py` | الطبقة الوحيدة للوصول لملف Excel (قفل، حفظ ذري، نسخ احتياطي، استعلامات) |
+| `storage/activation_report.py` | تقرير مشتق: بناء `activated_subscribers.xlsx` (الجوال + حالة التفعيل) حفظاً ذرياً |
 | `templates/*` | `base.html` + `_logo.html` + 14 صفحة |
 | `static/css/style.css`, `static/js/main.js`, `static/logo.svg` | التصميم والتفاعل والشعار |
 | `scripts/create_admin.py` | إنشاء/تحديث حساب أدمن |
@@ -93,12 +98,14 @@
 | # | الإنجاز | الدليل |
 |---|---|---|
 | P1 | خريطة المشروع كمصدر حقيقة | هذا الملف |
-| P2 | اختبارات pytest لكل الرحلات | `tests/` — 37 اختباراً ناجحاً |
+| P2 | اختبارات pytest لكل الرحلات | `tests/` — 41 اختباراً ناجحاً |
 | P3 | إصلاح مطابقة مفتاح قفل RateLimiter | `tests/test_core.py::test_rate_limiter_locks_after_max_failures` + `tests/test_public_auth.py::test_login_wrong_then_locked` |
 | P4 | احتساب حد طلب الاستعادة (3/ساعة) | `tests/test_public_auth.py::test_forgot_request_limit` |
 | P5 | صفحات أخطاء 403/404/500 بهوية الموقع | `templates/error.html` + تحقق حيّ لمسار 404 |
 | P6 | إزالة الأكواد اليتيمة (imports، حلقة no-op، تكرار تسجيل، دوال/متغيرات ميتة) | نجاح الاختبارات + تصيير المسارات الحيّة 200 |
 | P7 | اعتماديات الاختبار | `requirements-dev.txt` يضم pytest |
+| P8 | تقرير التفعيل Excel (الجوال + الحالة) يتحدّث مع كل تغيّر حالة + مسار تنزيل للأدمن | `storage/activation_report.py` + `/admin/activation-report` + زر في لوحة الأدمن؛ تحقق حيّ: ملف بعمودين و11 صفاً |
+| P9 | اختبارات التقرير | `tests/test_activation_report.py` (تصفية/بناء ملف/تحديث تلقائي/تنزيل) |
 
 ---
 

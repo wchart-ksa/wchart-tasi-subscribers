@@ -48,6 +48,10 @@ def load_config() -> dict:
     if not backup_dir.is_absolute():
         backup_dir = BASE_DIR / backup_dir
 
+    report_file = Path(os.environ.get("ACTIVATION_REPORT_FILE", "activated_subscribers.xlsx"))
+    if not report_file.is_absolute():
+        report_file = BASE_DIR / report_file
+
     return {
         "SECRET_KEY": secret,
         "ENV_PRODUCTION": production,
@@ -58,6 +62,7 @@ def load_config() -> dict:
         "PERMANENT_SESSION_LIFETIME_DAYS": _int("SESSION_DAYS", 7),
         "DATA_FILE": str(data_file),
         "BACKUP_DIR": str(backup_dir),
+        "ACTIVATION_REPORT_FILE": str(report_file),
         # بيانات الموقع العامة (تُعرض في القوالب)
         "SITE_TITLE": os.environ.get("SITE_TITLE", "مشتركين منصة دبليوشارت تاسي"),
         "WHATSAPP_NUMBER": os.environ.get("WHATSAPP_NUMBER", "0558030717"),

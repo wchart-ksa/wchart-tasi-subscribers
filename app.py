@@ -12,10 +12,11 @@ import csv
 import io
 import secrets
 from datetime import datetime, timedelta
+from pathlib import Path
 
 from flask import (
     Flask, request, session, redirect, url_for, render_template,
-    flash, g, make_response, abort,
+    flash, g, make_response, abort, send_file,
 )
 
 from common import (
@@ -30,6 +31,7 @@ from storage.excel_store import (
     ExcelStore, append_row, set_row, log_row, USERS, CODES,
     LOGS, EXTENSIONS, RESETS,
 )
+from storage import activation_report
 
 CFG = load_config()
 store = ExcelStore(CFG["DATA_FILE"], CFG["BACKUP_DIR"])
@@ -63,6 +65,7 @@ def before_request():
             with store.write() as wb:
                 set_row(wb, USERS, int(u["_row"]), {"status": STATUS_EXPIRED})
                 log_row(wb, user_id, "فحص تلقائي للانتهاء", u.get("phone"), "تحول إلى منتهي", "تم")
+            sync_activation_report()
         # إعادة تحميل سريع
         g.current_user = store.find_user(ID=str(user_id))
     else:
@@ -129,6 +132,18 @@ def save_session(user_row: dict, remember: bool = True):
         store.update(USERS, int(user_row["_row"]), {"last_login": now_str()})
     except Exception:
         pass
+
+
+def sync_activation_report() -> None:
+    """يعيد بناء ملف تقرير التفعيل (الجوال + حالة التفعيل) بعد تغيّر حالة الاشتراك."""
+    try:
+        activation_report.sync(store, CFG["ACTIVATION_REPORT_FILE"])
+    except Exception as exc:
+        # لا نُعطّل مسار المستخدم بسبب فشل التقرير — نكتفي بالتسجيل
+        try:
+            store.log("نظام", "تحديث تقرير التفعيل", "-", str(exc), "فشل")
+        except Exception:
+            pass
 
 
 # ----------- الرئيسية
@@ -256,7 +271,8 @@ def auth_login():
             return render_template("auth_login.html")
 
         # فحص انتهاء للاشتراك المفعل
-        store.sweep_expired()  # يعيد فقط عند الحاجة عبر read/write داخلي لكن نسميه
+        if store.sweep_expired():
+            sync_activation_report()  # قد تتحول حسابات إلى منتهي
         # إعادة تحميل بعد sweep إن تغير
         u2 = store.find_user(ID=u.get("ID"))
         u = u2 or u
@@ -438,7 +454,8 @@ def user_dashboard():
     cu = g.current_user
     if cu.get("role") == ROLE_ADMIN:
         return redirect(url_for("admin_dashboard"))
-    store.sweep_expired()
+    if store.sweep_expired():
+        sync_activation_report()  # قد تتحول حسابات إلى منتهي
     g.current_user = store.find_user(ID=cu.get("ID")) or cu
     return render_template("user_dashboard.html", user=g.current_user)
 
@@ -500,6 +517,7 @@ def user_activate():
                 "used_at": now_str(),
             })
             log_row(wb, cu.get("phone"), "تفعيل حساب ناجح", cu.get("username"), f"code={code}", "تم")
+        sync_activation_report()  # المشترك أصبح مفعّلاً
         RL.record(f"act:{cu.get('phone')}", ok=True, typ="activate")
         flash(f"تم تفعيل حسابك بنجاح. الاشتراك حتى {expd.strftime('%Y-%m-%d %H:%M')}", "success")
         return redirect(url_for("user_dashboard"))
@@ -567,6 +585,7 @@ def user_deactivate():
         return redirect(url_for("user_profile"))
     store.update(USERS, int(cu["_row"]), {"status": STATUS_DISABLED, "disabled_at": now_str()})
     store.log(cu.get("phone"), "تعطيل حساب من المستخدم", cu.get("username"), "-", "تم")
+    sync_activation_report()
     session.clear()
     flash("تم تعطيل حسابك بنجاح. لن تتمكن من الدخول حتى يُفعّله الأدمن", "info")
     return redirect(url_for("auth_login"))
@@ -596,6 +615,24 @@ def admin_dashboard():
         "due7": sum(1 for x in users if x.get("status")==STATUS_ACTIVE and days_left(x.get("expires_at")) <= 7),
     }
     return render_template("admin_dashboard.html", stats=stats)
+
+
+@app.route("/admin/activation-report")
+def admin_activation_report():
+    """تنزيل ملف Excel للمفعّلين (رقم الجوال + حالة التفعيل)."""
+    r = require_role(ROLE_ADMIN)
+    if r: return r
+    path = Path(CFG["ACTIVATION_REPORT_FILE"])
+    if not path.exists():
+        sync_activation_report()
+    if not path.exists():
+        flash("تعذّر إنشاء ملف التقرير", "error")
+        return redirect(url_for("admin_dashboard"))
+    return send_file(
+        path,
+        as_attachment=True,
+        download_name=activation_report.DEFAULT_FILENAME,
+    )
 
 
 @app.route("/admin/users")
@@ -645,6 +682,7 @@ def admin_toggle_user(phone):
     extra = {"disabled_at": now_str()} if new_st==STATUS_DISABLED else {"disabled_at": ""}
     store.update(USERS, int(u["_row"]), {"status": new_st, **extra})
     store.log(g.current_user.get("phone") or "admin", "تعطيل/إعادة تفعيل مشترك", u.get("phone"), f"من {u.get('status')} إلى {new_st}", "تم")
+    sync_activation_report()
     flash("تم تحديث حالة المشترك","success")
     return redirect(url_for("admin_users"))
 
@@ -720,6 +758,8 @@ def admin_extensions():
             store.log(g.current_user.get("phone") or "admin", "تمديد اشتراك", ph, f"{days} يوم — سبب: {reason}", "تم")
             res.update({"msg": f"تم التمديد بنجاح → {new_st}", "before": before_str, "after": after_str})
             results.append(res)
+        if any((row.get("msg") or "").startswith("تم التمديد") for row in results):
+            sync_activation_report()  # قد تتحول حسابات منتهية إلى مفعّلة
         flash("تمت معالجة تمديد الاشتراكات","success")
     return render_template("admin_extensions.html", results=results)
 

@@ -19,6 +19,7 @@ if str(ROOT) not in sys.path:
 
 from config import load_config
 from storage.excel_store import ExcelStore
+from storage import activation_report
 
 
 def main() -> int:
@@ -29,9 +30,16 @@ def main() -> int:
     backup = store.ensure_backup()
     swept = store.sweep_expired()
 
+    report = None
+    try:
+        report = activation_report.sync(store, cfg["ACTIVATION_REPORT_FILE"])
+    except Exception as exc:
+        print(f"[صيانة] تعذّر تحديث تقرير التفعيل: {exc}")
+
     print(f"[صيانة] ملف البيانات: {cfg['DATA_FILE']}")
     print(f"[صيانة] النسخة الاحتياطية: {backup if backup else 'لم تُنشأ (الملف غير موجود)'}")
     print(f"[صيانة] حسابات حُوّلت إلى «منتهي»: {swept}")
+    print(f"[صيانة] تقرير التفعيل: {report if report else 'لم يُحدَّث'}")
     return 0
 
 

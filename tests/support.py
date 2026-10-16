@@ -28,6 +28,7 @@ def seed_user(
     role=ROLE_USER,
     email=None,
     expires_at="2099-01-01 00:00:00",
+    activated_at=None,
 ):
     """يضيف مستخدماً بتشفير bcrypt ويعيد صفه."""
     password_hash, _ = PH.hash(password)
@@ -43,7 +44,7 @@ def seed_user(
             "role": role,
             "status": status,
             "created_at": now_str(),
-            "activated_at": now_str(),
+            "activated_at": now_str() if activated_at is None else activated_at,
             "expires_at": expires_at,
             "last_login": "",
             "disabled_at": "",
