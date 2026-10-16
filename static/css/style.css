@@ -861,3 +861,27 @@ a:hover {
   .btn-whatsapp-header span:last-child { display: none; }
   .card { padding: 18px; }
 }
+
+/* زر الخروج على هيئة رابط تنقّل */
+.nav-logout-form {
+  display: inline;
+  margin: 0;
+}
+
+.nav-logout {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.nav-logout:hover {
+  color: var(--danger-red) !important;
+  background-color: var(--badge-expired-bg);
+}
+
+@media (max-width: 900px) {
+  .nav-logout-form { display: block; width: 100%; }
+  .nav-logout { display: block; width: 100%; text-align: right; }
+}
+

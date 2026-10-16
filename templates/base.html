@@ -1,5 +1,5 @@
-{% macro brand_logo(prefix, size) %}
-<svg viewBox="0 0 360 104" role="img" aria-label="Wchart-tasi" xmlns="http://www.w3.org/2000/svg" style="height: {{ size }}px; width: auto; display: block;">
+{% macro brand_icon(prefix, size) %}
+<svg viewBox="0 0 108 108" role="img" aria-label="Wchart-tasi" xmlns="http://www.w3.org/2000/svg" style="height: {{ size }}px; width: {{ size }}px; display: block; flex: 0 0 auto;">
   <defs>
     <linearGradient id="{{ prefix }}bg" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#0e2a47" />
@@ -14,25 +14,19 @@
       <stop offset="100%" stop-color="#38bdf8" />
     </linearGradient>
   </defs>
-  <g transform="translate(6, 6)">
+  <g transform="translate(8, 8)">
     <rect x="0" y="0" width="92" height="92" rx="22" fill="url(#{{ prefix }}bg)" />
     <line x1="14" y1="30" x2="78" y2="30" stroke="#1e3a5f" stroke-width="1" stroke-dasharray="3,3" opacity="0.6" />
     <line x1="14" y1="46" x2="78" y2="46" stroke="#1e3a5f" stroke-width="1" stroke-dasharray="3,3" opacity="0.6" />
     <line x1="14" y1="62" x2="78" y2="62" stroke="#1e3a5f" stroke-width="1" stroke-dasharray="3,3" opacity="0.6" />
-    <line x1="26" y1="38" x2="26" y2="72" stroke="#10b981" stroke-width="2" stroke-linecap="round" />
-    <rect x="22" y="48" width="8" height="16" rx="2" fill="url(#{{ prefix }}bull)" />
-    <line x1="44" y1="26" x2="44" y2="66" stroke="#10b981" stroke-width="2" stroke-linecap="round" />
-    <rect x="40" y="32" width="8" height="22" rx="2" fill="url(#{{ prefix }}bull)" />
-    <line x1="62" y1="18" x2="62" y2="60" stroke="#10b981" stroke-width="2" stroke-linecap="round" />
-    <rect x="58" y="24" width="8" height="24" rx="2" fill="url(#{{ prefix }}bull)" />
-    <path d="M 18 68 Q 40 58, 58 36 L 76 20" fill="none" stroke="url(#{{ prefix }}arrow)" stroke-width="4" stroke-linecap="round" />
+    <line x1="26" y1="38" x2="26" y2="72" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" />
+    <rect x="21.5" y="48" width="9" height="16" rx="2" fill="url(#{{ prefix }}bull)" />
+    <line x1="44" y1="26" x2="44" y2="66" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" />
+    <rect x="39.5" y="32" width="9" height="22" rx="2" fill="url(#{{ prefix }}bull)" />
+    <line x1="62" y1="18" x2="62" y2="60" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" />
+    <rect x="57.5" y="24" width="9" height="24" rx="2" fill="url(#{{ prefix }}bull)" />
+    <path d="M 18 68 Q 40 58, 58 36 L 76 20" fill="none" stroke="url(#{{ prefix }}arrow)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
     <polygon points="78,16 62,20 70,30" fill="#34d399" />
-  </g>
-  <g transform="translate(112, 60)">
-    <text font-family="'Segoe UI', system-ui, Tahoma, Arial, sans-serif" font-weight="800" font-size="40px">
-      <tspan fill="currentColor">Wchart</tspan><tspan fill="#38bdf8">-</tspan><tspan fill="#10b981">tasi</tspan>
-    </text>
-    <text y="24" font-family="'Segoe UI', system-ui, Tahoma, Arial, sans-serif" font-weight="600" font-size="13px" letter-spacing="2px" fill="#94a3b8">TASI VOLUME PROFILE</text>
   </g>
 </svg>
 {% endmacro %}
@@ -53,11 +47,11 @@
   <header class="site-header">
     <div class="container header-inner">
       <a href="{{ url_for('home') }}" class="header-brand">
-        {{ brand_logo('h', 46) }}
-        <div class="header-title-box">
+        {{ brand_icon('h', 44) }}
+        <span class="header-title-box">
           <span class="header-site-title">{{ site_title }}</span>
-          <span class="header-site-subtitle">Wchart-tasi Volume Profile</span>
-        </div>
+          <span class="header-site-subtitle">Wchart-tasi · Volume Profile</span>
+        </span>
       </a>
 
       <nav class="header-nav" id="mainNav">
@@ -71,11 +65,11 @@
           {% else %}
             <a href="{{ url_for('user_dashboard') }}" class="nav-link {% if request.endpoint == 'user_dashboard' %}active{% endif %}">🏠 لوحتي</a>
             <a href="{{ url_for('user_profile') }}" class="nav-link {% if request.endpoint == 'user_profile' %}active{% endif %}">👤 حسابي</a>
-            <a href="{{ url_for('user_activate') }}" class="nav-link {% if request.endpoint in ['user_activate', 'user_activate_form'] %}active{% endif %}">🔑 تفعيل الاشتراك</a>
+            <a href="{{ url_for('user_activate') }}" class="nav-link {% if request.endpoint == 'user_activate' %}active{% endif %}">🔑 تفعيل الاشتراك</a>
           {% endif %}
-          <form action="{{ url_for('auth_logout') }}" method="post" style="display: inline;">
+          <form method="post" action="{{ url_for('auth_logout') }}" class="nav-logout-form">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <button type="submit" class="nav-link" style="color: var(--danger-red); background: none; border: none; cursor: pointer; font: inherit;">🚪 خروج</button>
+            <button type="submit" class="nav-link nav-logout">🚪 خروج</button>
           </form>
         {% else %}
           <a href="{{ url_for('auth_login') }}" class="nav-link {% if request.endpoint == 'auth_login' %}active{% endif %}">دخول</a>
@@ -116,10 +110,10 @@
   <footer class="site-footer">
     <div class="container">
       <div class="footer-top">
-        <div class="footer-brand" style="color: #ffffff;">
-          {{ brand_logo('f', 42) }}
+        <div class="footer-brand">
+          {{ brand_icon('f', 40) }}
           <div>
-            <h3 style="color: #ffffff; font-size: 1.1rem; font-weight: 800;">{{ site_title }}</h3>
+            <h3 style="color: #ffffff; font-size: 1.05rem; font-weight: 800; margin-bottom: 2px;">{{ site_title }}</h3>
             <span style="font-size: 0.8rem; color: #34d399;">بوابة إدارة ومتابعة اشتراكات منصة دبليوشارت تاسي</span>
           </div>
         </div>
