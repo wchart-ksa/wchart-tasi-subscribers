@@ -909,5 +909,19 @@ def error_500(_e):
     return render_template("error.html", code=500, message="حدث خطأ غير متوقع، حاول مرة أخرى"), 500
 
 
+@app.errorhandler(PermissionError)
+def error_permission(_e):
+    """ملف Excel مقفول (مفتوح في Excel مثلاً) — رسالة واضحة بدل صفحة المطور."""
+    try:
+        store.log("نظام", "فشل حفظ ملف Excel", "-", "الملف مقفول (PermissionError)", "فشل")
+    except Exception:
+        pass
+    return render_template(
+        "error.html",
+        code=503,
+        message="تعذّر حفظ البيانات لأن ملف Excel مقفول. أغلق الملف subscribers_1.xlsx وأعد المحاولة",
+    ), 503
+
+
 if __name__ == "__main__":
     app.run(host=CFG["FLASK_HOST"], port=CFG["FLASK_PORT"], debug=CFG["FLASK_DEBUG"], use_reloader=False)

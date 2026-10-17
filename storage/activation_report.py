@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import os
 import secrets
+import time
 from pathlib import Path
 
 import openpyxl
@@ -61,5 +62,17 @@ def sync(store, path) -> Path:
         wb.save(tmp)
     finally:
         wb.close()
-    os.replace(tmp, path)
+
+    last_error = None
+    for _ in range(5):  # الملف قد يكون مفتوحاً في Excel مؤقتاً
+        try:
+            os.replace(tmp, path)
+            last_error = None
+            break
+        except OSError as exc:
+            last_error = exc
+            time.sleep(0.15)
+    if last_error is not None:
+        tmp.unlink(missing_ok=True)
+        raise last_error
     return path

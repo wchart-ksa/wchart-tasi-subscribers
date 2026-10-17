@@ -326,14 +326,14 @@ class ExcelStore:
             except Exception:
                 pass
         last_error = None
-        for _ in range(5):  # إعادة محاولة قليلة إذا كان الملف مؤقتاً مستخدماً
+        for _ in range(10):  # إعادة محاولة إذا كان الملف مفتوحاً مؤقتاً (Excel مثلاً)
             try:
                 os.replace(tmp, self.data_file)
                 last_error = None
                 break
             except OSError as exc:  # PermissionError على ويندوز مثلاً
                 last_error = exc
-                time.sleep(0.1)
+                time.sleep(0.15)
         if last_error is not None:
             if tmp.exists():
                 tmp.unlink(missing_ok=True)
