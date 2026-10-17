@@ -17,6 +17,7 @@ os.environ["ENV"] = "development"
 os.environ["SECRET_KEY"] = "test-secret-key-0123456789abcdef"
 os.environ["DATA_FILE"] = str(_TMP / "subscribers_test.xlsx")
 os.environ["BACKUP_DIR"] = str(_TMP / "backups")
+os.environ["ACTIVATION_REPORT_FILE"] = str(_TMP / "activation_report.xlsx")
 os.environ["SMTP_PASSWORD"] = ""  # يمنع أي إرسال بريد حقيقي أثناء الاختبار
 
 import pytest  # noqa: E402

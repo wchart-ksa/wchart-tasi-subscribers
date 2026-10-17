@@ -66,10 +66,13 @@ def before_request():
                 set_row(wb, USERS, int(u["_row"]), {"status": STATUS_EXPIRED})
                 log_row(wb, user_id, "فحص تلقائي للانتهاء", u.get("phone"), "تحول إلى منتهي", "تم")
             sync_activation_report()
-        # إعادة تحميل سريع
-        g.current_user = store.find_user(ID=str(user_id))
+    # إعادة تحميل سريع
+        g.current_user = store.find_user(ID=u.get("ID"))
     else:
         g.current_user = None
+    # إبقاء ملف التقرير مطابقاً للبيانات (حتى لو عُدّلت خارج الموقع)
+    if request.endpoint != "static":
+        keep_activation_report_fresh()
     # حقن دوال في القالب
     g.csrf_token = csrf.token
 
@@ -144,6 +147,26 @@ def sync_activation_report() -> None:
             store.log("نظام", "تحديث تقرير التفعيل", "-", str(exc), "فشل")
         except Exception:
             pass
+
+
+def _report_is_stale() -> bool:
+    """هل ملف التقرير أقدم من ملف البيانات (أو غير موجود)؟ إصلاح دائم للمزامنة."""
+    try:
+        report = Path(CFG["ACTIVATION_REPORT_FILE"])
+        if not report.exists():
+            return True
+        data = Path(CFG["DATA_FILE"])
+        if not data.exists():
+            return False
+        return data.stat().st_mtime > report.stat().st_mtime
+    except OSError:
+        return False
+
+
+def keep_activation_report_fresh() -> None:
+    """يجعل التقرير مطابقاً للبيانات دائماً (يُستدعى عند كل طلب، بتكلفة فحص وقت فقط)."""
+    if _report_is_stale():
+        sync_activation_report()
 
 
 # ----------- الرئيسية
@@ -622,9 +645,8 @@ def admin_activation_report():
     """تنزيل ملف Excel للمفعّلين (رقم الجوال + حالة التفعيل)."""
     r = require_role(ROLE_ADMIN)
     if r: return r
+    keep_activation_report_fresh()
     path = Path(CFG["ACTIVATION_REPORT_FILE"])
-    if not path.exists():
-        sync_activation_report()
     if not path.exists():
         flash("تعذّر إنشاء ملف التقرير", "error")
         return redirect(url_for("admin_dashboard"))

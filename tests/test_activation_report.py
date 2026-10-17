@@ -1,4 +1,6 @@
 """تقرير التفعيل: ملف Excel (رقم الجوال + حالة التفعيل) يتحدّث مع تغيّر الحالة."""
+import os
+
 import openpyxl
 
 import app as app_module
@@ -62,3 +64,19 @@ def test_admin_can_download_report(client, store, tmp_path, monkeypatch):
     resp = client.get("/admin/activation-report")
     assert resp.status_code == 200
     assert "spreadsheet" in resp.headers["Content-Type"]
+
+
+def test_report_auto_refreshes_when_data_changes(client, store, tmp_path, monkeypatch):
+    report = tmp_path / "auto.xlsx"
+    monkeypatch.setitem(app_module.CFG, "ACTIVATION_REPORT_FILE", str(report))
+
+    client.get("/auth/login")  # before_request ينشئ التقرير تلقائياً
+    assert report.exists()
+
+    support.seed_user(store, "late1", "0508888888", "Secret123", status=STATUS_ACTIVE)
+    os.utime(report, (0, 0))  # اجعل التقرير أقدم من ملف البيانات
+
+    client.get("/auth/login")
+    values = list(openpyxl.load_workbook(report)[activation_report.SHEET].iter_rows(values_only=True))
+    assert ("0508888888", "مفعل") in values
+
